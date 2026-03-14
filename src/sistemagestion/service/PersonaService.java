@@ -34,11 +34,20 @@ public class PersonaService {
             return;
         }
 
-        // VALIDACION LICENCIA
-        if (conductor.getLicencia() == null || conductor.getLicencia().isEmpty()) {
-            System.out.println("El conductor debe tener licencia");
-            return;
-        }
+       if (conductor.getNumeroLicencia() == null || conductor.getNumeroLicencia().isEmpty()) {
+    System.out.println("El conductor debe tener número de licencia");
+    return;
+}
+
+    if (conductor.getCategoriaLicencia() == null || conductor.getCategoriaLicencia().isEmpty()) {
+    System.out.println("El conductor debe tener categoría de licencia");
+    return;
+    }
+
+    if (conductor.getVencimientoLicencia() == null || conductor.getVencimientoLicencia().isEmpty()) {
+    System.out.println("Debe indicar el vencimiento de la licencia");
+    return;
+    }
 
         conductorDAO.agregarConductor(conductor);
     }

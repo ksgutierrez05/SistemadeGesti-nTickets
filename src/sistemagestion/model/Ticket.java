@@ -7,14 +7,16 @@ public class Ticket {
     private double precioBase;
     private double descuento;
     private double valorFinal;
+    private String fechaCompra;
 
     public Ticket() {
     }
 
-    public Ticket(String codigo, Pasajero pasajero, double precioBase) {
+    public Ticket(String codigo, Pasajero pasajero, double precioBase, String fechaCompra) {
         this.codigo = codigo;
         this.pasajero = pasajero;
         this.precioBase = precioBase;
+        this.fechaCompra = fechaCompra;
     }
 
     public void calcularValorFinal() {
@@ -57,12 +59,21 @@ public class Ticket {
         return valorFinal;
     }
 
+    public String getFechaCompra() {
+        return fechaCompra;
+    }
+
+    public void setFechaCompra(String fechaCompra) {
+        this.fechaCompra = fechaCompra;
+    }
+
     @Override
     public String toString() {
         return "Codigo Ticket: " + codigo
                 + "\nPasajero: " + pasajero.getNombre() + " " + pasajero.getApellido()
                 + "\nPrecio Base: " + precioBase
                 + "\nDescuento: " + descuento
-                + "\nValor Final: " + valorFinal;
+                + "\nValor Final: " + valorFinal
+                + "\nFecha Compra: " + fechaCompra;
     }
 }

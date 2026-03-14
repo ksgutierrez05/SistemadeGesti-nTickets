@@ -2,7 +2,6 @@ package sistemagestion.service;
 
 import sistemagestion.dao.TicketDAO;
 import sistemagestion.model.Ticket;
-
 public class TicketService {
 
     private TicketDAO ticketDAO;

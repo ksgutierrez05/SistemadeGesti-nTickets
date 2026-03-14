@@ -20,5 +20,12 @@ public class PasajeroAdultoMayor extends Pasajero {
 
         return descuento;
     }
-
+public void imprimirDetalle() {
+        System.out.println("----- PASAJERO ADULTO MAYOR -----");
+        System.out.println("Nombre: " + getNombre() + " " + getApellido());
+        System.out.println("Documento: " + getDocumento());
+        System.out.println("Fecha Nacimiento: " + getFechaNacimiento());
+        System.out.println("Tipo: Adulto Mayor (30% descuento si edad >= 60)");
+        System.out.println("---------------------------------");
+    }
 }

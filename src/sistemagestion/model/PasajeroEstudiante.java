@@ -20,5 +20,12 @@ public class PasajeroEstudiante extends Pasajero {
 
         return descuento;
     }
-
+public void imprimirDetalle() {
+        System.out.println("----- PASAJERO ESTUDIANTE -----");
+        System.out.println("Nombre: " + getNombre() + " " + getApellido());
+        System.out.println("Documento: " + getDocumento());
+        System.out.println("Fecha Nacimiento: " + getFechaNacimiento());
+        System.out.println("Tipo: Estudiante (15% descuento)");
+        System.out.println("-------------------------------");
+    }
 }

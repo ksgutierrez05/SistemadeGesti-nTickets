@@ -1,6 +1,6 @@
 package sistemagestion.model;
 
-public class Ticket {
+public class Ticket implements Imprimible{
 
     private String codigo;
     private Pasajero pasajero;
@@ -66,14 +66,16 @@ public class Ticket {
     public void setFechaCompra(String fechaCompra) {
         this.fechaCompra = fechaCompra;
     }
-
-    @Override
-    public String toString() {
-        return "Codigo Ticket: " + codigo
-                + "\nPasajero: " + pasajero.getNombre() + " " + pasajero.getApellido()
-                + "\nPrecio Base: " + precioBase
-                + "\nDescuento: " + descuento
-                + "\nValor Final: " + valorFinal
-                + "\nFecha Compra: " + fechaCompra;
+    
+  public void imprimirDetalle() {
+        System.out.println("----- TICKET -----");
+        System.out.println("Código: " + codigo);
+        System.out.println("Pasajero: " + pasajero.getNombre());
+        System.out.println("Fecha Compra: " + fechaCompra);
+        System.out.println("Precio Base: " + precioBase);
+        System.out.println("Descuento aplicado: " + (descuento*100) + "%");
+        System.out.println("Valor Final: " + valorFinal);
+        System.out.println("-----------------");
     }
+    
 }

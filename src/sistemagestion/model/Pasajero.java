@@ -1,6 +1,6 @@
 package sistemagestion.model;
 
-public abstract class Pasajero extends Persona {
+public abstract class Pasajero extends Persona implements Imprimible {
 
     private String fechaNacimiento;
 
@@ -43,5 +43,8 @@ public abstract class Pasajero extends Persona {
 
         return edad;
     }
+    
+    public abstract void imprimirDetalle();
+    
     public abstract double obtenerDescuento();
 }

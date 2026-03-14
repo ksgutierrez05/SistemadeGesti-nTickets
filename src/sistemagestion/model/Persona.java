@@ -7,18 +7,16 @@ public abstract class Persona {
     private String nombre;
     private String apellido;
     private String telefono;
-    private String fechaNacimiento;
 
     public Persona() {
     }
 
-    public Persona(String tipoDocumento, String documento, String nombre, String apellido, String telefono, String fechaNacimiento) {
+    public Persona(String tipoDocumento, String documento, String nombre, String apellido, String telefono) {
         this.tipoDocumento = tipoDocumento;
         this.documento = documento;
         this.nombre = nombre;
         this.apellido = apellido;
         this.telefono = telefono;
-        this.fechaNacimiento = fechaNacimiento;
     }
 
     public String getTipoDocumento() {
@@ -61,21 +59,12 @@ public abstract class Persona {
         this.telefono = telefono;
     }
 
-    public String getFechaNacimiento() {
-        return fechaNacimiento;
-    }
-
-    public void setFechaNacimiento(String fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
-    }
-
     @Override
     public String toString() {
         return "Tipo Documento: " + tipoDocumento
                 + "\nDocumento: " + documento
                 + "\nNombre: " + nombre
                 + "\nApellido: " + apellido
-                + "\nTelefono: " + telefono
-                + "\nFecha Nacimiento: " + fechaNacimiento;
+                + "\nTelefono: " + telefono;
     }
 }

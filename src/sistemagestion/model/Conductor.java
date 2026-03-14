@@ -10,10 +10,12 @@ public class Conductor extends Persona {
         super();
     }
 
-    public Conductor(String tipoDocumento, String documento, String nombre, String apellido, String telefono, String fechaNacimiento,
+    public Conductor(String tipoDocumento, String documento, String nombre,
+                     String apellido, String telefono,
                      String numeroLicencia, String categoriaLicencia, String vencimientoLicencia) {
 
-        super(tipoDocumento, documento, nombre, apellido, telefono, fechaNacimiento);
+        super(tipoDocumento, documento, nombre, apellido, telefono);
+
         this.numeroLicencia = numeroLicencia;
         this.categoriaLicencia = categoriaLicencia;
         this.vencimientoLicencia = vencimientoLicencia;

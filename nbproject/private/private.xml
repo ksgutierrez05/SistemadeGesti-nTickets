@@ -4,12 +4,17 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/Bayron/OneDrive/Documents/NetBeansProjects/SistemadeGesti-nTickets/src/sistemagestion/model/Persona.java</file>
-            <file>file:/C:/Users/Bayron/OneDrive/Documents/NetBeansProjects/SistemadeGesti-nTickets/src/sistemagestion/model/conductor.java</file>
+            <file>file:/C:/Users/Bayron/OneDrive/Documents/NetBeansProjects/SistemadeGesti-nTickets/src/sistemagestion/model/Conductor.java</file>
             <file>file:/C:/Users/Bayron/OneDrive/Documents/NetBeansProjects/SistemadeGesti-nTickets/src/sistemagestion/model/Pasajero.java</file>
             <file>file:/C:/Users/Bayron/OneDrive/Documents/NetBeansProjects/SistemadeGesti-nTickets/src/sistemagestion/model/PasajeroRegular.java</file>
             <file>file:/C:/Users/Bayron/OneDrive/Documents/NetBeansProjects/SistemadeGesti-nTickets/src/sistemagestion/model/PasajeroEstudiante.java</file>
             <file>file:/C:/Users/Bayron/OneDrive/Documents/NetBeansProjects/SistemadeGesti-nTickets/src/sistemagestion/model/PasajeroAdultoMayor.java</file>
-            <file>file:/C:/Users/Bayron/OneDrive/Documents/NetBeansProjects/SistemadeGesti-nTickets/src/sistemagestion/dao/VehiculoDAO.java</file>
+            <file>file:/C:/Users/Bayron/OneDrive/Documents/NetBeansProjects/SistemadeGesti-nTickets/src/sistemagestion/model/Ticket.java</file>
+            <file>file:/C:/Users/Bayron/OneDrive/Documents/NetBeansProjects/SistemadeGesti-nTickets/src/sistemagestion/dao/PasajeroDAO.java</file>
+            <file>file:/C:/Users/Bayron/OneDrive/Documents/NetBeansProjects/SistemadeGesti-nTickets/src/sistemagestion/dao/ConductorDAO.java</file>
+            <file>file:/C:/Users/Bayron/OneDrive/Documents/NetBeansProjects/SistemadeGesti-nTickets/src/sistemagestion/dao/TicketDAO.java</file>
+            <file>file:/C:/Users/Bayron/OneDrive/Documents/NetBeansProjects/SistemadeGesti-nTickets/src/sistemagestion/service/PersonaService.java</file>
+            <file>file:/C:/Users/Bayron/OneDrive/Documents/NetBeansProjects/SistemadeGesti-nTickets/src/sistemagestion/service/TicketService.java</file>
         </group>
     </open-files>
 </project-private>

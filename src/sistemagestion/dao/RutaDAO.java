@@ -9,83 +9,91 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import sistemagestion.model.Vehiculo;
+import sistemagestion.model.Ruta;
 
 /**
  *
- * @author Lenovo
+ * @author Maria Cristina
  */
-public class VehiculoDAO {
+public class RutaDAO {
+
     private File archivos;
-    
-    public VehiculoDAO () {
-        archivos = new File("vehiculo.txt");
+
+    public RutaDAO() {
+
+        archivos = new File("rutas.txt");
 
         try {
             if (!archivos.exists()) {
                 archivos.createNewFile();
-                System.out.println("Archivo creado");
+                System.out.println("Archivo de rutas creado");
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
-    
-    public void guardarVehiculo(Vehiculo vehiculo){
-         try (FileWriter fw = new FileWriter(archivos, true)) {
+    //GuardarRutas
+
+    public void guardarRuta(Ruta ruta) {
+
+        try (FileWriter fw = new FileWriter(archivos, true)) {
 
             fw.write(
-                vehiculo.getPlaca() + ";" +
-                vehiculo.getRuta().getCodigo() + ";" +
-                vehiculo.isDisponible() + ";" +
-                vehiculo.getCapacidad() + ";" +
-                vehiculo.getTarifaBase() + "\n"
+                    ruta.getCodigo() + ";"
+                    + ruta.getOrigen() + ";"
+                    + ruta.getDestino() + ";"
+                    + ruta.getDistancia() + "\n"
             );
-            
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
-    public void ListarVehiculos(){
+//ListarRutas
+
+    public void listarRutas() {
+
         try (BufferedReader br = new BufferedReader(new FileReader(archivos))) {
 
-        String linea;
+            String linea;
 
-        while ((linea = br.readLine()) != null) {
-            System.out.println(linea);
-        }
-
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-    }
-    
-    
-    public String BuscarVehiculo(String placa ){
-         try (BufferedReader br = new BufferedReader(new FileReader(archivos))) {
-
-        String linea;
-
-        while ((linea = br.readLine()) != null) {
-
-            String[] datos = linea.split(",");
-
-            if (datos[0].equals(placa)) {
-                return linea;
+            while ((linea = br.readLine()) != null) {
+                System.out.println(linea);
             }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-    } catch (IOException e) {
-        e.printStackTrace();
     }
+    //BuscarRutas
 
-    return null;
+    public String buscarRuta(String codigo) {
+
+        try (BufferedReader br = new BufferedReader(new FileReader(archivos))) {
+
+            String linea;
+
+            while ((linea = br.readLine()) != null) {
+
+                String[] datos = linea.split(",");
+
+                if (datos[0].equals(codigo)) {
+                    return linea;
+                }
+
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
-    
-    
-    
-    public void actualizarVehiculo(Vehiculo vehiculo){
+    public void actualizarRuta(Ruta ruta){
+
     File temp = new File("temp.txt");
 
     try (BufferedReader br = new BufferedReader(new FileReader(archivos));
@@ -97,14 +105,13 @@ public class VehiculoDAO {
 
             String[] datos = linea.split(",");
 
-            if (datos[0].equals(vehiculo.getPlaca())) {
+            if (datos[0].equals(ruta.getCodigo())) {
 
                 fw.write(
-                    vehiculo.getPlaca() + "," +
-                    vehiculo.getRuta().getCodigo() + "," +
-                    vehiculo.isDisponible() + "," +
-                    vehiculo.getCapacidad() + "," +
-                    vehiculo.getTarifaBase() + "\n"
+                    ruta.getCodigo() + "," +
+                    ruta.getOrigen() + "," +
+                    ruta.getDestino() + "," +
+                    ruta.getDistancia() + "\n"
                 );
 
             } else {
@@ -121,7 +128,8 @@ public class VehiculoDAO {
     archivos.delete();
     temp.renameTo(archivos);
 }
-    public void eliminarVehiculo(String placa){
+    public void eliminarRuta(String codigo){
+
     File temp = new File("temp.txt");
 
     try (BufferedReader br = new BufferedReader(new FileReader(archivos));
@@ -133,7 +141,7 @@ public class VehiculoDAO {
 
             String[] datos = linea.split(",");
 
-            if (!datos[0].equals(placa)) {
+            if (!datos[0].equals(codigo)) {
                 fw.write(linea + "\n");
             }
 
@@ -147,4 +155,5 @@ public class VehiculoDAO {
     temp.renameTo(archivos);
 }
     
+
 }

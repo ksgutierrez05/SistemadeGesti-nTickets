@@ -2,25 +2,29 @@ package sistemagestion.model;
 public class Ticket implements Imprimible,Calculable{
     private String codigo;
     private Pasajero pasajero;
+    private Vehiculo vehiculo;
     private double precioBase;
     private double descuento;
     private double valorFinal;
     private String fechaCompra;
     public Ticket() {
     }
-    public Ticket(String codigo, Pasajero pasajero, double precioBase, String fechaCompra) {
+    public Ticket(String codigo, Pasajero pasajero,Vehiculo vehiculo, double precioBase, String fechaCompra) {
         this.codigo = codigo;
         this.pasajero = pasajero;
-        this.precioBase = precioBase;
+        this.vehiculo = vehiculo;
+        this.precioBase = vehiculo.getTarifaBase();
         this.fechaCompra = fechaCompra;
     }
-public double calcularTotal() {
-    this.descuento = pasajero.obtenerDescuento();
-    this.valorFinal = precioBase * (1 - this.descuento);
-    return valorFinal;
-}    public String getCodigo() {
-        return codigo;
+public double calcularTotal(boolean esFestivo) {
+    double base = precioBase;
+    if (esFestivo) {
+        base *= 1.2;
     }
+    this.descuento = pasajero.obtenerDescuento();
+    this.valorFinal = base * (1 - this.descuento);
+    return valorFinal;
+}
     public void setCodigo(String codigo) {
         this.codigo = codigo;
     }
@@ -53,6 +57,15 @@ public double calcularTotal() {
     }
     public void setValorFinal(double valorFinal) {
         this.valorFinal = valorFinal;
+    }
+
+    public Vehiculo getVehiculo() {
+        return vehiculo;
+    }
+
+    public void setVehiculo(Vehiculo vehiculo) {
+        this.vehiculo = vehiculo;
+        this.precioBase = vehiculo.getTarifaBase();
     }
     public void imprimirDetalle() {
         System.out.println("----- TICKET -----");

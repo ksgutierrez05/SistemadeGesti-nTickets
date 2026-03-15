@@ -10,10 +10,15 @@ package sistemagestion.model;
  */
 public class Buseta extends Vehiculo {
     
-    public Buseta(String placa, String ruta, boolean disponible, int capacidad, float tarifaBase) {
-        super(placa, ruta, disponible, capacidad, tarifaBase);
+    public Buseta(Ruta ruta, String placa, boolean disponible, int capacidad, float tarifaBase) {
+        super(ruta, placa, disponible, capacidad, tarifaBase);
         this.capacidad=19;
         this.tarifaBase=8000;
     }
+    
+  public void imprimirDetalle() {
+    System.out.println("=== BUSETA ===");
+    super.imprimirDetalle();
+}
     
 }

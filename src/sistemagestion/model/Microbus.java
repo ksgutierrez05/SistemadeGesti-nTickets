@@ -10,10 +10,17 @@ package sistemagestion.model;
  */
 public class Microbus extends Vehiculo {
     
-    public Microbus(String placa, String ruta, boolean disponible, int capacidad, float tarifaBase) {
-        super(placa, ruta, disponible, capacidad, tarifaBase);
+    public Microbus(Ruta ruta, String placa, boolean disponible, int capacidad, float tarifaBase) {
+        super(ruta, placa, disponible, capacidad, tarifaBase);
         this.capacidad=25;
         this.tarifaBase=10000;
     }
+    
+    
+    public void imprimirDetalle() {
+    System.out.println("=== MICROBUS ===");
+    super.imprimirDetalle();
+}
+   
     
 }

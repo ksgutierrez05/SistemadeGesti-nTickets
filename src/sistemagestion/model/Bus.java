@@ -10,10 +10,15 @@ package sistemagestion.model;
  */
 public class Bus extends Vehiculo {
     
-    public Bus(String placa, String ruta, boolean disponible, int capacidad, float tarifaBase) {
-        super(placa, ruta, disponible, capacidad, tarifaBase);
+    public Bus(Ruta ruta, String placa, boolean disponible, int capacidad, float tarifaBase) {
+        super(ruta, placa, disponible, capacidad, tarifaBase);
         this.capacidad=45;
         this.tarifaBase=15000;
     }
+    
+    public void imprimirDetalle() {
+    System.out.println("=== BUS====");
+    super.imprimirDetalle();
+}
     
 }

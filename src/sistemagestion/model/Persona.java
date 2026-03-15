@@ -58,13 +58,4 @@ public abstract class Persona {
     public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
-
-    @Override
-    public String toString() {
-        return "Tipo Documento: " + tipoDocumento
-                + "\nDocumento: " + documento
-                + "\nNombre: " + nombre
-                + "\nApellido: " + apellido
-                + "\nTelefono: " + telefono;
-    }
 }

@@ -45,11 +45,14 @@ public class Conductor extends Persona {
         this.vencimientoLicencia = vencimientoLicencia;
     }
 
-    @Override
-    public String toString() {
-        return super.toString()
-                + "\nNúmero Licencia: " + numeroLicencia
-                + "\nCategoría Licencia: " + categoriaLicencia
-                + "\nVencimiento Licencia: " + vencimientoLicencia;
+    public void imprimirDetalle() {
+        System.out.println("=== CONDUCTOR ===");
+        System.out.println("Documento: " + getDocumento());
+        System.out.println("Nombre: " + getNombre() + " " + getApellido());
+        System.out.println("Teléfono: " + getTelefono());
+        System.out.println("Número Licencia: " + numeroLicencia);
+        System.out.println("Categoría Licencia: " + categoriaLicencia);
+        System.out.println("Vencimiento Licencia: " + vencimientoLicencia);
     }
+
 }

@@ -29,18 +29,33 @@ public class VehiculoService {
         if(resultado==null){
             return true;
         }
-        
-        
         return false;  
     }
     //Registrar lo vehiculos 
     public void registrarVehiculo(Vehiculo vehiculo){
         if(validarplaca(vehiculo.getPlaca())){
          vehiculoDAO.guardarVehiculo(vehiculo);
+         System.out.println("Vehiculo registrado correctamente");
          
+        }else{
+             System.out.println("La placa ya existe");
         }
          
     }
+    
+    
+    public String buscarVehiculo(String placa){
+
+    String resultado = vehiculoDAO.BuscarVehiculo(placa);
+
+    if(resultado == null){
+        System.out.println("El vehiculo no existe");
+    }else{
+        System.out.println("Vehiculo encontrado: " + resultado);
+    }
+
+    return resultado;
+}  
     
     // ACtualizarvehiculos
       public void actualizarVehiculo(Vehiculo vehiculo){

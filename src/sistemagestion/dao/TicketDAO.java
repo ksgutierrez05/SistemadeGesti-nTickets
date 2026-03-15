@@ -14,6 +14,7 @@ import sistemagestion.model.PasajeroEstudiante;
 import sistemagestion.model.PasajeroRegular;
 import sistemagestion.model.Ticket;
 
+
 public class TicketDAO {
 
     private final String archivoTickets = "tickets.txt";
@@ -25,7 +26,6 @@ public class TicketDAO {
 
             Pasajero p = ticket.getPasajero();
 
-            ticket.calcularTotal();
 
             String linea = ticket.getCodigo() + ";" +
                            p.getClass().getSimpleName() + ";" +
@@ -96,7 +96,8 @@ public class TicketDAO {
                 }
 
                 Ticket t = new Ticket(codigo, p, precioBase, fechaCompra);
-
+                t.setDescuento(descuento);
+                t.setValorFinal(valorFinal);
                 lista.add(t);
             }
 
@@ -204,7 +205,7 @@ public class TicketDAO {
 
                 totalTickets++;
 
-                totalRecaudado += t.calcularTotal();
+                totalRecaudado += t.getValorFinal();
             }
 
         }

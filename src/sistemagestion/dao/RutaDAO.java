@@ -92,6 +92,68 @@ public class RutaDAO {
 
         return null;
     }
+    public void actualizarRuta(Ruta ruta){
+
+    File temp = new File("temp.txt");
+
+    try (BufferedReader br = new BufferedReader(new FileReader(archivos));
+         FileWriter fw = new FileWriter(temp)) {
+
+        String linea;
+
+        while ((linea = br.readLine()) != null) {
+
+            String[] datos = linea.split(",");
+
+            if (datos[0].equals(ruta.getCodigo())) {
+
+                fw.write(
+                    ruta.getCodigo() + "," +
+                    ruta.getOrigen() + "," +
+                    ruta.getDestino() + "," +
+                    ruta.getDistancia() + "\n"
+                );
+
+            } else {
+
+                fw.write(linea + "\n");
+
+            }
+        }
+
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
+    archivos.delete();
+    temp.renameTo(archivos);
+}
+    public void eliminarRuta(String codigo){
+
+    File temp = new File("temp.txt");
+
+    try (BufferedReader br = new BufferedReader(new FileReader(archivos));
+         FileWriter fw = new FileWriter(temp)) {
+
+        String linea;
+
+        while ((linea = br.readLine()) != null) {
+
+            String[] datos = linea.split(",");
+
+            if (!datos[0].equals(codigo)) {
+                fw.write(linea + "\n");
+            }
+
+        }
+
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
+    archivos.delete();
+    temp.renameTo(archivos);
+}
     
 
 }

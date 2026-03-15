@@ -35,10 +35,10 @@ public class VehiculoDAO {
          try (FileWriter fw = new FileWriter(archivos, true)) {
 
             fw.write(
-                vehiculo.getPlaca() + "," +
-                vehiculo.getRuta().getCodigo() + "," +
-                vehiculo.isDisponible() + "," +
-                vehiculo.getCapacidad() + "," +
+                vehiculo.getPlaca() + ";" +
+                vehiculo.getRuta().getCodigo() + ";" +
+                vehiculo.isDisponible() + ";" +
+                vehiculo.getCapacidad() + ";" +
                 vehiculo.getTarifaBase() + "\n"
             );
             

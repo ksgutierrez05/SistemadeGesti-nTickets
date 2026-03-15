@@ -40,9 +40,9 @@ public class RutaDAO {
         try (FileWriter fw = new FileWriter(archivos, true)) {
 
             fw.write(
-                    ruta.getCodigo() + ","
-                    + ruta.getOrigen() + ","
-                    + ruta.getDestino() + ","
+                    ruta.getCodigo() + ";"
+                    + ruta.getOrigen() + ";"
+                    + ruta.getDestino() + ";"
                     + ruta.getDistancia() + "\n"
             );
 

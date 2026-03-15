@@ -14,10 +14,8 @@ public class ConductorDAO {
 
     private final String archivoConductores = "conductores.txt";
 
-    // Guardar un conductor
     public void agregarConductor(Conductor conductor) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivoConductores, true))) {
-            // Guardamos: tipoDocumento;documento;nombre;apellido;telefono;numeroLicencia;categoriaLicencia;vencimientoLicencia
             String linea = conductor.getTipoDocumento() + ";" +
                            conductor.getDocumento() + ";" +
                            conductor.getNombre() + ";" +
@@ -33,7 +31,6 @@ public class ConductorDAO {
         }
     }
 
-    // Leer todos los conductores
     public List<Conductor> listarConductores() {
         List<Conductor> lista = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(archivoConductores))) {
@@ -63,7 +60,6 @@ public class ConductorDAO {
         return lista;
     }
 
-    // Buscar conductor por documento
     public Conductor buscarConductor(String documento) {
         List<Conductor> lista = listarConductores();
         for (Conductor c : lista) {
@@ -73,4 +69,29 @@ public class ConductorDAO {
         }
         return null;
     }
-}
+
+    public void eliminarConductor(String documento) {
+        List<Conductor> lista = listarConductores();
+        lista.removeIf(c -> c.getDocumento().equals(documento));
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivoConductores, false))) {
+            for (Conductor c : lista) {
+                String linea = c.getTipoDocumento() + ";" +
+                               c.getDocumento() + ";" +
+                               c.getNombre() + ";" +
+                               c.getApellido() + ";" +
+                               c.getTelefono() + ";" +
+                               c.getNumeroLicencia() + ";" +
+                               c.getCategoriaLicencia() + ";" +
+                               c.getVencimientoLicencia();
+                bw.write(linea);
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Error eliminando conductor: " + e.getMessage());
+        }
+    }
+
+    public Conductor existeConductor(String documento) {
+        return buscarConductor(documento);
+    }
+} 

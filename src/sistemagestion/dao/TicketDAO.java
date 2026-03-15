@@ -212,4 +212,8 @@ public class TicketDAO {
         System.out.println("Tickets vendidos: " + totalTickets);
         System.out.println("Total recaudado: $" + totalRecaudado);
     }
+
+    public List<Ticket> ticketsPorPasajeroYFecha(Pasajero pasajero, String fechaCompra) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

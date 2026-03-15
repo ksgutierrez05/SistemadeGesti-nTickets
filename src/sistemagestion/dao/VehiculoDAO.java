@@ -36,7 +36,7 @@ public class VehiculoDAO {
 
             fw.write(
                 vehiculo.getPlaca() + "," +
-                vehiculo.getRuta() + "," +
+                vehiculo.getRuta().getCodigo() + "," +
                 vehiculo.isDisponible() + "," +
                 vehiculo.getCapacidad() + "," +
                 vehiculo.getTarifaBase() + "\n"
@@ -82,5 +82,69 @@ public class VehiculoDAO {
 
     return null;
     }
+    
+    
+    
+    public void actualizarVehiculo(Vehiculo vehiculo){
+    File temp = new File("temp.txt");
+
+    try (BufferedReader br = new BufferedReader(new FileReader(archivos));
+         FileWriter fw = new FileWriter(temp)) {
+
+        String linea;
+
+        while ((linea = br.readLine()) != null) {
+
+            String[] datos = linea.split(",");
+
+            if (datos[0].equals(vehiculo.getPlaca())) {
+
+                fw.write(
+                    vehiculo.getPlaca() + "," +
+                    vehiculo.getRuta().getCodigo() + "," +
+                    vehiculo.isDisponible() + "," +
+                    vehiculo.getCapacidad() + "," +
+                    vehiculo.getTarifaBase() + "\n"
+                );
+
+            } else {
+
+                fw.write(linea + "\n");
+
+            }
+        }
+
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
+    archivos.delete();
+    temp.renameTo(archivos);
+}
+    public void eliminarVehiculo(String placa){
+    File temp = new File("temp.txt");
+
+    try (BufferedReader br = new BufferedReader(new FileReader(archivos));
+         FileWriter fw = new FileWriter(temp)) {
+
+        String linea;
+
+        while ((linea = br.readLine()) != null) {
+
+            String[] datos = linea.split(",");
+
+            if (!datos[0].equals(placa)) {
+                fw.write(linea + "\n");
+            }
+
+        }
+
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
+    archivos.delete();
+    temp.renameTo(archivos);
+}
     
 }

@@ -1,63 +1,58 @@
 package sistemagestion.service;
 
-import sistemagestion.dao.PasajeroDAO;
 import sistemagestion.dao.ConductorDAO;
-import sistemagestion.model.Pasajero;
+import sistemagestion.dao.pasajeroDAO;
 import sistemagestion.model.Conductor;
+import sistemagestion.model.Pasajero;
+import sistemagestion.model.PasajeroAdultoMayor;
 
 public class PersonaService {
 
-    private PasajeroDAO pasajeroDAO;
+    private pasajeroDAO pasajeroDAO;
     private ConductorDAO conductorDAO;
 
     public PersonaService() {
-        pasajeroDAO = new PasajeroDAO();
-        conductorDAO = new ConductorDAO();
+        this.pasajeroDAO = new pasajeroDAO();
+        this.conductorDAO = new ConductorDAO();
     }
 
-    // REGISTRAR PASAJERO
-    public void registrarPasajero(Pasajero pasajero) {
+  
+    public void registrarPasajero(Pasajero pasajero, String fechaCompra) {
+        if (pasajero == null) throw new IllegalArgumentException("Pasajero nulo");
 
-        if (pasajero == null) {
-            System.out.println("El pasajero no puede ser nulo");
-            return;
+      
+        int edad = pasajero.calcularEdad(fechaCompra);
+        if (edad >= 60 && !(pasajero instanceof PasajeroAdultoMayor)) {
+            pasajero = new PasajeroAdultoMayor(
+                pasajero.getTipoDocumento(),
+                pasajero.getDocumento(),
+                pasajero.getNombre(),
+                pasajero.getApellido(),
+                pasajero.getTelefono(),
+                pasajero.getFechaNacimiento()
+            );
         }
 
         pasajeroDAO.agregarPasajero(pasajero);
     }
 
-    // REGISTRAR CONDUCTOR
     public void registrarConductor(Conductor conductor) {
-
-        if (conductor == null) {
-            System.out.println("El conductor no puede ser nulo");
-            return;
-        }
-
-       if (conductor.getNumeroLicencia() == null || conductor.getNumeroLicencia().isEmpty()) {
-    System.out.println("El conductor debe tener número de licencia");
-    return;
-}
-
-    if (conductor.getCategoriaLicencia() == null || conductor.getCategoriaLicencia().isEmpty()) {
-    System.out.println("El conductor debe tener categoría de licencia");
-    return;
-    }
-
-    if (conductor.getVencimientoLicencia() == null || conductor.getVencimientoLicencia().isEmpty()) {
-    System.out.println("Debe indicar el vencimiento de la licencia");
-    return;
-    }
+        if (conductor == null) throw new IllegalArgumentException("Conductor nulo");
+        if (conductor.getNumeroLicencia() == null || conductor.getNumeroLicencia().isEmpty())
+            throw new IllegalArgumentException("Conductor sin licencia");
 
         conductorDAO.agregarConductor(conductor);
     }
 
     public Pasajero buscarPasajero(String documento) {
-        return pasajeroDAO.buscarPasajero(documento);
+        Pasajero p = pasajeroDAO.buscarPasajero(documento);
+        if (p == null) throw new IllegalArgumentException("Pasajero no encontrado: " + documento);
+        return p;
     }
 
     public Conductor buscarConductor(String documento) {
-        return conductorDAO.buscarConductor(documento);
+        Conductor c = conductorDAO.buscarConductor(documento);
+        if (c == null) throw new IllegalArgumentException("Conductor no encontrado: " + documento);
+        return c;
     }
-
 }

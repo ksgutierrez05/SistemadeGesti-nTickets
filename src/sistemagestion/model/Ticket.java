@@ -1,6 +1,6 @@
 package sistemagestion.model;
 
-public class Ticket implements Imprimible{
+public class Ticket implements Imprimible,Calculable{
 
     private String codigo;
     private Pasajero pasajero;
@@ -19,14 +19,11 @@ public class Ticket implements Imprimible{
         this.fechaCompra = fechaCompra;
     }
 
-    public void calcularValorFinal() {
-
-        descuento = pasajero.obtenerDescuento();
-
-        valorFinal = precioBase - (precioBase * descuento);
-
-    }
-
+   public double calcularTotal() {
+    double descuento = pasajero.obtenerDescuento();
+    valorFinal = precioBase * (1 - descuento);     
+    return valorFinal;
+}
     public String getCodigo() {
         return codigo;
     }
@@ -77,5 +74,4 @@ public class Ticket implements Imprimible{
         System.out.println("Valor Final: " + valorFinal);
         System.out.println("-----------------");
     }
-    
 }

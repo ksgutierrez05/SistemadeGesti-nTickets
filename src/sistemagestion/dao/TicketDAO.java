@@ -2,6 +2,8 @@ package sistemagestion.dao;
 
 import sistemagestion.model.Ticket;
 import java.util.ArrayList;
+import java.util.List;
+import sistemagestion.model.Pasajero;
 
 public class TicketDAO {
 
@@ -40,6 +42,14 @@ public class TicketDAO {
             listaTickets.remove(ticket);
         }
 
+    }
+
+    public int contarTicketsPorPasajeroYFecha(String documento, String fechaCompra) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public List<Ticket> ticketsPorPasajeroYFecha(Pasajero pasajero, String fechaCompra) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

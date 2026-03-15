@@ -42,6 +42,31 @@ public class VehiculoService {
          
     }
     
+    // ACtualizarvehiculos
+      public void actualizarVehiculo(Vehiculo vehiculo){
+
+        if(!validarplaca(vehiculo.getPlaca())){
+            vehiculoDAO.actualizarVehiculo(vehiculo);
+            System.out.println("Vehiculo modificado");
+        }else{
+            System.out.println("El vehiculo no existe");
+        }
+
+    }
+      
+      
+      //Eliminar
+       public void eliminarVehiculo(String placa){
+
+        if(!validarplaca(placa)){
+            vehiculoDAO.eliminarVehiculo(placa);
+            System.out.println("Vehiculo eliminado");
+        }else{
+            System.out.println("El vehiculo no existe");
+        }
+
+    }
+    
     
     
     

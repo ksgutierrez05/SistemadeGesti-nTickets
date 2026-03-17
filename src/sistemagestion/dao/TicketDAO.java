@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import sistemagestion.model.Bus;
 import sistemagestion.model.Buseta;
+import sistemagestion.model.Microbus;
 import sistemagestion.model.Pasajero;
 import sistemagestion.model.PasajeroAdultoMayor;
 import sistemagestion.model.PasajeroEstudiante;
@@ -109,13 +110,13 @@ public class TicketDAO {
                 } else if (tipoVehiculo.equalsIgnoreCase("Buseta")) {
                     vehiculo = new Buseta(ruta, placa, true, 19, 8000f);
                 } else if (tipoVehiculo.equalsIgnoreCase("MicroBus")) {
-                    vehiculo = new MicroBus(ruta, placa, true, 25, 10000f);
+                    vehiculo = new Microbus(ruta, placa, true, 25, 10000f);
                 } else {
                     System.out.println("Tipo de vehículo desconocido: " + tipoVehiculo + " — Ticket ignorado.");
                     continue;
                 }
 
-                Ticket t = new Ticket(codigo, p, vehiculo, fechaCompra);
+                Ticket t = new Ticket(codigo, p, vehiculo, precioBase, fechaCompra);
                 t.setPrecioBase(precioBase);
                 t.setDescuento(descuento);
                 t.setValorFinal(valorFinal);

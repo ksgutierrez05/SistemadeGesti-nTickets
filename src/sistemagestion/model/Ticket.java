@@ -67,6 +67,9 @@ public double calcularTotal(boolean esFestivo) {
         this.vehiculo = vehiculo;
         this.precioBase = vehiculo.getTarifaBase();
     }
+    public String getCodigo() {
+    return codigo;
+}
     public void imprimirDetalle() {
         System.out.println("----- TICKET -----");
         System.out.println("Código: " + codigo);
@@ -78,8 +81,11 @@ public double calcularTotal(boolean esFestivo) {
         System.out.println("-----------------");
     }
 
-    public String getCodigo() {
+    @Override
+    public double calcularTotal() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
+
+
 
 }

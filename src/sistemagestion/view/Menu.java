@@ -8,6 +8,6 @@ package sistemagestion.view;
  *
  * @author Lenovo
  */
-public class Main {
+public class Menu {
     
 }

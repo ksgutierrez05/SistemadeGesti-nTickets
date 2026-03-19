@@ -103,6 +103,9 @@ public class PersonaService {
         if (conductor == null) throw new IllegalArgumentException("Conductor nulo");
         if (conductor.getNumeroLicencia() == null || conductor.getNumeroLicencia().isEmpty())
             throw new IllegalArgumentException("Conductor sin licencia");
+        if (!conductor.getCategoriaLicencia().trim().equalsIgnoreCase("C1") &&
+            !conductor.getCategoriaLicencia().trim().equalsIgnoreCase("C2"))
+            throw new IllegalArgumentException("Categoría de licencia no válida: solo se acepta C1 o C2");
         conductorDAO.agregarConductor(conductor);
     }
     public Conductor buscarConductor(String documento) {

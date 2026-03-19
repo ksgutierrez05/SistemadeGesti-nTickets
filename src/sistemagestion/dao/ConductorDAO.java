@@ -94,4 +94,8 @@ public class ConductorDAO {
     public Conductor existeConductor(String documento) {
         return buscarConductor(documento);
     }
+
+    public void modificarConductor(Conductor conductor) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 } 

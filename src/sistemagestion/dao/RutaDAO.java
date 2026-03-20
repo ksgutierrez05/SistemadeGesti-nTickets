@@ -5,6 +5,7 @@
 package sistemagestion.dao;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -35,22 +36,24 @@ public class RutaDAO {
     }
     //GuardarRutas
 
-    public void guardarRuta(Ruta ruta) {
+   public void guardarRuta(Ruta ruta) {
 
-        try (FileWriter fw = new FileWriter(archivos, true)) {
+    try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivos, true))) {
 
-            fw.write(
-                    ruta.getCodigo() + ";"
-                    + ruta.getOrigen() + ";"
-                    + ruta.getDestino() + ";"
-                    + ruta.getDistancia() + "\n"
-            );
+        bw.write(
+            ruta.getCodigo() + ";" +
+            ruta.getOrigen() + ";" +
+            ruta.getDestino() + ";" +
+            ruta.getDistancia() + ";" +
+            ruta.getTiempo()
+        );
+        bw.newLine();
+        bw.newLine();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+    } catch (IOException e) {
+        e.printStackTrace();
     }
+}
 //ListarRutas
 
     public void listarRutas() {
@@ -78,7 +81,7 @@ public class RutaDAO {
 
             while ((linea = br.readLine()) != null) {
 
-                String[] datos = linea.split(",");
+                String[] datos = linea.split(";");
 
                 if (datos[0].equals(codigo)) {
                     return linea;
@@ -92,68 +95,67 @@ public class RutaDAO {
 
         return null;
     }
-    public void actualizarRuta(Ruta ruta){
 
-    File temp = new File("temp.txt");
+    public void actualizarRuta(Ruta ruta) {
 
-    try (BufferedReader br = new BufferedReader(new FileReader(archivos));
-         FileWriter fw = new FileWriter(temp)) {
+        File temp = new File("temp.txt");
 
-        String linea;
+        try (BufferedReader br = new BufferedReader(new FileReader(archivos)); FileWriter fw = new FileWriter(temp)) {
 
-        while ((linea = br.readLine()) != null) {
+            String linea;
 
-            String[] datos = linea.split(",");
+            while ((linea = br.readLine()) != null) {
 
-            if (datos[0].equals(ruta.getCodigo())) {
+                String[] datos = linea.split(";");
 
-                fw.write(
-                    ruta.getCodigo() + "," +
-                    ruta.getOrigen() + "," +
-                    ruta.getDestino() + "," +
-                    ruta.getDistancia() + "\n"
-                );
+                if (datos[0].equals(ruta.getCodigo())) {
 
-            } else {
+                    fw.write(
+                            ruta.getCodigo() + ";"
+                            + ruta.getOrigen() + ";"
+                            + ruta.getDestino() + ";"
+                            + ruta.getDistancia() + "\n"
+                    );
 
-                fw.write(linea + "\n");
+                } else {
 
-            }
-        }
+                    fw.write(linea + "\n");
 
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-
-    archivos.delete();
-    temp.renameTo(archivos);
-}
-    public void eliminarRuta(String codigo){
-
-    File temp = new File("temp.txt");
-
-    try (BufferedReader br = new BufferedReader(new FileReader(archivos));
-         FileWriter fw = new FileWriter(temp)) {
-
-        String linea;
-
-        while ((linea = br.readLine()) != null) {
-
-            String[] datos = linea.split(",");
-
-            if (!datos[0].equals(codigo)) {
-                fw.write(linea + "\n");
+                }
             }
 
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-    } catch (IOException e) {
-        e.printStackTrace();
+        archivos.delete();
+        temp.renameTo(archivos);
     }
 
-    archivos.delete();
-    temp.renameTo(archivos);
-}
-    
+    public void eliminarRuta(String codigo) {
+
+        File temp = new File("temp.txt");
+
+        try (BufferedReader br = new BufferedReader(new FileReader(archivos)); FileWriter fw = new FileWriter(temp)) {
+
+            String linea;
+
+            while ((linea = br.readLine()) != null) {
+
+                String[] datos = linea.split(";");
+
+                if (!datos[0].equals(codigo)) {
+                    fw.write(linea + "\n");
+                }
+
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        archivos.delete();
+        temp.renameTo(archivos);
+    }
 
 }

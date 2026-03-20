@@ -16,6 +16,7 @@ public class VehiculoService {
     private VehiculoDAO vehiculoDAO;
 
     public VehiculoService() {
+        
     }
     
 

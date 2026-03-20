@@ -15,8 +15,9 @@ public class RutaService {
     
     private RutaDAO rutaDAO;
 
-    public RutaService() {
-    }
+   public RutaService() {
+    this.rutaDAO = new RutaDAO();
+}
     
 
     public RutaService(RutaDAO rutaDAO) {

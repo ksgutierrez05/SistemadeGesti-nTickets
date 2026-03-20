@@ -35,10 +35,11 @@ public class VehiculoDAO {
          try (FileWriter fw = new FileWriter(archivos, true)) {
 
             fw.write(
-                vehiculo.getPlaca() + "," +
-                vehiculo.getRuta().getCodigo() + "," +
-                vehiculo.isDisponible() + "," +
-                vehiculo.getCapacidad() + "," +
+                vehiculo.getClass().getSimpleName() + ";" +
+                vehiculo.getPlaca() + ";" +
+                vehiculo.getRuta().getCodigo() + ";" +
+                vehiculo.isDisponible() + ";" +
+                vehiculo.getCapacidad() + ";" +
                 vehiculo.getTarifaBase() + "\n"
             );
             
@@ -50,7 +51,7 @@ public class VehiculoDAO {
     }
     
     
-    public void ListarVehiculos(){
+    public void listarVehiculos(){
         try (BufferedReader br = new BufferedReader(new FileReader(archivos))) {
 
         String linea;
@@ -65,16 +66,16 @@ public class VehiculoDAO {
     }
     
     
-    public String BuscarVehiculo(String placa ){
+    public String buscarVehiculo(String placa ){
          try (BufferedReader br = new BufferedReader(new FileReader(archivos))) {
 
         String linea;
 
         while ((linea = br.readLine()) != null) {
 
-            String[] datos = linea.split(",");
+            String[] datos = linea.split(";");
 
-            if (datos[0].equals(placa)) {
+            if (datos[1].equals(placa)) {
                 return linea;
             }
         }
@@ -98,15 +99,15 @@ public class VehiculoDAO {
 
         while ((linea = br.readLine()) != null) {
 
-            String[] datos = linea.split(",");
+            String[] datos = linea.split(";");
 
-            if (datos[0].equals(vehiculo.getPlaca())) {
+            if (datos[1].equals(vehiculo.getPlaca())) {
 
                 fw.write(
-                    vehiculo.getPlaca() + "," +
-                    vehiculo.getRuta().getCodigo() + "," +
-                    vehiculo.isDisponible() + "," +
-                    vehiculo.getCapacidad() + "," +
+                    vehiculo.getPlaca() + ";" +
+                    vehiculo.getRuta().getCodigo() + ";" +
+                    vehiculo.isDisponible() + ";" +
+                    vehiculo.getCapacidad() + ";" +
                     vehiculo.getTarifaBase() + "\n"
                 );
 
@@ -134,9 +135,9 @@ public class VehiculoDAO {
 
         while ((linea = br.readLine()) != null) {
 
-            String[] datos = linea.split(",");
+            String[] datos = linea.split(";");
 
-            if (!datos[0].equals(placa)) {
+            if (!datos[1].equals(placa)) {
                 fw.write(linea + "\n");
             }
 

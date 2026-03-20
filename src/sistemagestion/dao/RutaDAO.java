@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import sistemagestion.model.Ruta;
 
 /**
@@ -36,41 +38,64 @@ public class RutaDAO {
     }
     //GuardarRutas
 
-   public void guardarRuta(Ruta ruta) {
+    public void guardarRuta(Ruta ruta) {
 
-    try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivos, true))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivos, true))) {
 
-        bw.write(
-            ruta.getCodigo() + ";" +
-            ruta.getOrigen() + ";" +
-            ruta.getDestino() + ";" +
-            ruta.getDistancia() + ";" +
-            ruta.getTiempo()
-        );
-        bw.newLine();
-        bw.newLine();
+            bw.write(
+                    ruta.getCodigo() + ";"
+                    + ruta.getOrigen() + ";"
+                    + ruta.getDestino() + ";"
+                    + ruta.getDistancia() + ";"
+                    + ruta.getTiempo()
+            );
 
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-}
-//ListarRutas
-
-    public void listarRutas() {
-
-        try (BufferedReader br = new BufferedReader(new FileReader(archivos))) {
-
-            String linea;
-
-            while ((linea = br.readLine()) != null) {
-                System.out.println(linea);
-            }
+            bw.newLine();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
+//ListarRutas
+
+   
+    
+   public List<Ruta> obtenerRutas() {
+    List<Ruta> lista = new ArrayList<>();
+
+    try (BufferedReader br = new BufferedReader(new FileReader(archivos))) {
+        String linea;
+
+        while ((linea = br.readLine()) != null) {
+            String[] datos = linea.split(";");
+
+            // Validar que tenga todos los datos
+            if (datos.length == 5) {
+                try {
+                    Ruta ruta = new Ruta(
+                            datos[0],
+                            datos[1],
+                            datos[2],
+                            Double.parseDouble(datos[3].replace(",", ".")),
+                            Integer.parseInt(datos[4])
+                    );
+
+                    lista.add(ruta);
+
+                } catch (NumberFormatException e) {
+                    System.out.println("Error en números: " + linea);
+                }
+            } else {
+                System.out.println("Línea incompleta: " + linea);
+            }
+        }
+
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
+    return lista;
+}
     //BuscarRutas
 
     public String buscarRuta(String codigo) {
@@ -114,7 +139,8 @@ public class RutaDAO {
                             ruta.getCodigo() + ";"
                             + ruta.getOrigen() + ";"
                             + ruta.getDestino() + ";"
-                            + ruta.getDistancia() + "\n"
+                            + ruta.getDistancia() + ";"
+                            + ruta.getTiempo() + "\n"
                     );
 
                 } else {

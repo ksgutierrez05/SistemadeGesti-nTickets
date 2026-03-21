@@ -12,36 +12,41 @@ import sistemagestion.model.PasajeroAdultoMayor;
 import sistemagestion.model.PasajeroEstudiante;
 import sistemagestion.model.PasajeroRegular;
 public class pasajeroDAO {
+
     private final String archivoPasajeros = "pasajeros.txt";
+
     public void agregarPasajero(Pasajero pasajero) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivoPasajeros, true))) {
-            String linea = pasajero.getClass().getSimpleName() + ";" +
-                           pasajero.getTipoDocumento() + ";" +
-                           pasajero.getDocumento() + ";" +
-                           pasajero.getNombre() + ";" +
-                           pasajero.getApellido() + ";" +
-                           pasajero.getTelefono() + ";" +
-                           pasajero.getFechaNacimiento();
+            String linea = pasajero.getClass().getSimpleName() + ";"
+                    + pasajero.getTipoDocumento() + ";"
+                    + pasajero.getDocumento() + ";"
+                    + pasajero.getNombre() + ";"
+                    + pasajero.getApellido() + ";"
+                    + pasajero.getTelefono() + ";"
+                    + pasajero.getFechaNacimiento();
             bw.write(linea);
             bw.newLine();
         } catch (IOException e) {
             System.out.println("Error guardando pasajero: " + e.getMessage());
         }
     }
+
     public List<Pasajero> listarPasajeros() {
         List<Pasajero> lista = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(archivoPasajeros))) {
             String linea;
             while ((linea = br.readLine()) != null) {
                 String[] partes = linea.split(";");
-                if (partes.length < 7) continue;
-                String tipo = partes[0];
-                String tipoDoc = partes[1];
-                String doc = partes[2];
-                String nombre = partes[3];
-                String apellido = partes[4];
-                String telefono = partes[5];
-                String fechaNacimiento = partes[6];
+                if (partes.length < 7) {
+                    continue;
+                }
+                String tipo = partes[0].trim(); 
+                String tipoDoc = partes[1].trim();
+                String doc = partes[2].trim();
+                String nombre = partes[3].trim();
+                String apellido = partes[4].trim();
+                String telefono = partes[5].trim();
+                String fechaNacimiento = partes[6].trim();
                 Pasajero p;
                 switch (tipo) {
                     case "PasajeroEstudiante":
@@ -63,20 +68,22 @@ public class pasajeroDAO {
         }
         return lista;
     }
+
     public Pasajero buscarPasajero(String documento) {
         List<Pasajero> lista = listarPasajeros();
         for (Pasajero p : lista) {
-            if (p.getDocumento().equals(documento)) {
+            if (p.getDocumento().trim().equals(documento.trim())) {
                 return p;
             }
         }
         return null;
     }
+
     public boolean modificarPasajero(Pasajero pasajeroActualizado) {
         List<Pasajero> lista = listarPasajeros();
         boolean encontrado = false;
         for (int i = 0; i < lista.size(); i++) {
-            if (lista.get(i).getDocumento().equals(pasajeroActualizado.getDocumento())) {
+            if (lista.get(i).getDocumento().trim().equals(pasajeroActualizado.getDocumento().trim())) { 
                 lista.set(i, pasajeroActualizado);
                 encontrado = true;
                 break;
@@ -87,13 +94,13 @@ public class pasajeroDAO {
         }
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivoPasajeros, false))) {
             for (Pasajero p : lista) {
-                String linea = p.getClass().getSimpleName() + ";" +
-                               p.getTipoDocumento() + ";" +
-                               p.getDocumento() + ";" +
-                               p.getNombre() + ";" +
-                               p.getApellido() + ";" +
-                               p.getTelefono() + ";" +
-                               p.getFechaNacimiento();
+                String linea = p.getClass().getSimpleName() + ";"
+                        + p.getTipoDocumento() + ";"
+                        + p.getDocumento() + ";"
+                        + p.getNombre() + ";"
+                        + p.getApellido() + ";"
+                        + p.getTelefono() + ";"
+                        + p.getFechaNacimiento();
                 bw.write(linea);
                 bw.newLine();
             }
@@ -102,18 +109,19 @@ public class pasajeroDAO {
         }
         return true;
     }
+
     public void eliminarPasajero(String documento) {
         List<Pasajero> lista = listarPasajeros();
-        lista.removeIf(p -> p.getDocumento().equals(documento));
+        lista.removeIf(p -> p.getDocumento().trim().equals(documento.trim()));
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivoPasajeros, false))) {
             for (Pasajero p : lista) {
-                String linea = p.getClass().getSimpleName() + ";" +
-                               p.getTipoDocumento() + ";" +
-                               p.getDocumento() + ";" +
-                               p.getNombre() + ";" +
-                               p.getApellido() + ";" +
-                               p.getTelefono() + ";" +
-                               p.getFechaNacimiento();
+                String linea = p.getClass().getSimpleName() + ";"
+                        + p.getTipoDocumento() + ";"
+                        + p.getDocumento() + ";"
+                        + p.getNombre() + ";"
+                        + p.getApellido() + ";"
+                        + p.getTelefono() + ";"
+                        + p.getFechaNacimiento();
                 bw.write(linea);
                 bw.newLine();
             }
@@ -121,6 +129,7 @@ public class pasajeroDAO {
             System.out.println("Error eliminando pasajero: " + e.getMessage());
         }
     }
+
     public boolean existePasajero(String documento) {
         return buscarPasajero(documento) != null;
     }

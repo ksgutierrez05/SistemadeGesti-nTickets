@@ -46,6 +46,15 @@ public class RutaService {
         }
 
     }
+     public Ruta obtenerPrimeraRuta() {
+    List<Ruta> rutas = rutaDAO.obtenerRutas();
+
+    if (rutas.isEmpty()) {
+        return null;
+    }
+
+    return rutas.get(0);
+}
 
     public List<Ruta> listarRutas() {
         return rutaDAO.obtenerRutas();

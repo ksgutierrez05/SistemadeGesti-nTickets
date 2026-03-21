@@ -4,7 +4,9 @@
  */
 package sistemagestion.service;
 
+import java.util.List;
 import sistemagestion.dao.VehiculoDAO;
+import sistemagestion.model.Ruta;
 import sistemagestion.model.Vehiculo;
 
 /**
@@ -12,77 +14,93 @@ import sistemagestion.model.Vehiculo;
  * @author Maria Cristina
  */
 public class VehiculoService {
-    
+
     private VehiculoDAO vehiculoDAO;
 
-    public VehiculoService() {
-    }
     
-
-    public VehiculoService(VehiculoDAO vehiculoDAo) {
-        this.vehiculoDAO = vehiculoDAo;
+    public VehiculoService() {
+        this.vehiculoDAO = new VehiculoDAO();
     }
+
+
+    public VehiculoService(VehiculoDAO vehiculoDAO) {
+        this.vehiculoDAO = vehiculoDAO;
+    }
+
     //Valida si la placa ingresada ya existe 
-    public boolean validarplaca(String placa){
+    public boolean validarplaca(String placa) {
         String resultado;
-        resultado=vehiculoDAO.BuscarVehiculo(placa);
-        if(resultado==null){
+        resultado = vehiculoDAO.buscarVehiculo(placa);
+        if (resultado == null) {
             return true;
         }
-        return false;  
+        return false;
     }
+
     //Registrar lo vehiculos 
-    public void registrarVehiculo(Vehiculo vehiculo){
-        if(validarplaca(vehiculo.getPlaca())){
-         vehiculoDAO.guardarVehiculo(vehiculo);
-         System.out.println("Vehiculo registrado correctamente");
-         
-        }else{
-             System.out.println("La placa ya existe");
+    public void registrarVehiculo(Vehiculo vehiculo) {
+        if (validarplaca(vehiculo.getPlaca())) {
+            vehiculoDAO.guardarVehiculo(vehiculo);
+            System.out.println("Vehiculo registrado correctamente");
+
+        } else {
+            System.out.println("La placa ya existe");
         }
-         
+
     }
+    public List<Ruta> obtenerRutasDisponibles(RutaService rutaService) {
+    List<Ruta> rutas = rutaService.listarRutas();
     
-    
-    public String buscarVehiculo(String placa){
-
-    String resultado = vehiculoDAO.BuscarVehiculo(placa);
-
-    if(resultado == null){
-        System.out.println("El vehiculo no existe");
-    }else{
-        System.out.println("Vehiculo encontrado: " + resultado);
+    if (rutas.isEmpty()) {
+        System.out.println("No hay rutas registradas.");
     }
 
-    return resultado;
-}  
+    return rutas; 
+}
     
+   public void listarVehiculos(){
+    if (vehiculoDAO != null) {
+        vehiculoDAO.listarVehiculos();
+    } else {
+        System.out.println("Error: DAO no inicializado");
+    }
+}
+    public String buscarVehiculo(String placa) {
+
+        String resultado = vehiculoDAO.buscarVehiculo(placa);
+
+        if (resultado == null) {
+            System.out.println("El vehiculo no existe");
+        } else {
+            System.out.println("Vehiculo encontrado: " 
+                    + resultado);
+        }
+
+        return resultado;
+    }
+
     // ACtualizarvehiculos
-      public void actualizarVehiculo(Vehiculo vehiculo){
+    public void actualizarVehiculo(Vehiculo vehiculo) {
 
-        if(!validarplaca(vehiculo.getPlaca())){
+        if (!validarplaca(vehiculo.getPlaca())) {
             vehiculoDAO.actualizarVehiculo(vehiculo);
             System.out.println("Vehiculo modificado");
-        }else{
+        } else {
             System.out.println("El vehiculo no existe");
         }
 
     }
-      
-      
-      //Eliminar
-       public void eliminarVehiculo(String placa){
 
-        if(!validarplaca(placa)){
+    //Eliminar
+    public void eliminarVehiculo(String placa) {
+
+        if (!validarplaca(placa)) {
             vehiculoDAO.eliminarVehiculo(placa);
             System.out.println("Vehiculo eliminado");
-        }else{
+        } else {
             System.out.println("El vehiculo no existe");
         }
 
     }
-    
-    
-    
-    
+
 }

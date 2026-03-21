@@ -46,7 +46,31 @@ public abstract class Vehiculo implements Imprimible  {
     public float getTarifaBase() {
         return tarifaBase;
     }
+
+    public void setRuta(Ruta ruta) {
+        this.ruta = ruta;
+    }
+
+    public void setPlaca(String placa) {
+        this.placa = placa;
+    }
+
+    public void setDisponible(boolean disponible) {
+        this.disponible = disponible;
+    }
+
+    public void setCapacidad(int capacidad) {
+        this.capacidad = capacidad;
+    }
+
+    public void setTarifaBase(float tarifaBase) {
+        this.tarifaBase = tarifaBase;
+    }
+    
+    
+    
     @Override
+    
     
 public void imprimirDetalle() {
 

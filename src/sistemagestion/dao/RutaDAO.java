@@ -5,10 +5,13 @@
 package sistemagestion.dao;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import sistemagestion.model.Ruta;
 
 /**
@@ -37,37 +40,62 @@ public class RutaDAO {
 
     public void guardarRuta(Ruta ruta) {
 
-        try (FileWriter fw = new FileWriter(archivos, true)) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivos, true))) {
 
-            fw.write(
+            bw.write(
                     ruta.getCodigo() + ";"
                     + ruta.getOrigen() + ";"
                     + ruta.getDestino() + ";"
-                    + ruta.getDistancia() + "\n"
+                    + ruta.getDistancia() + ";"
+                    + ruta.getTiempo()
             );
+
+            bw.newLine();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 //ListarRutas
 
-    public void listarRutas() {
+   
+    
+   public List<Ruta> obtenerRutas() {
+    List<Ruta> lista = new ArrayList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(archivos))) {
+    try (BufferedReader br = new BufferedReader(new FileReader(archivos))) {
+        String linea;
 
-            String linea;
+        while ((linea = br.readLine()) != null) {
+            String[] datos = linea.split(";");
 
-            while ((linea = br.readLine()) != null) {
-                System.out.println(linea);
+            // Validar que tenga todos los datos
+            if (datos.length == 5) {
+                try {
+                    Ruta ruta = new Ruta(
+                            datos[0],
+                            datos[1],
+                            datos[2],
+                            Double.parseDouble(datos[3].replace(",", ".")),
+                            Integer.parseInt(datos[4])
+                    );
+
+                    lista.add(ruta);
+
+                } catch (NumberFormatException e) {
+                    System.out.println("Error en números: " + linea);
+                }
+            } else {
+                System.out.println("Línea incompleta: " + linea);
             }
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
+    } catch (IOException e) {
+        e.printStackTrace();
     }
+
+    return lista;
+}
     //BuscarRutas
 
     public String buscarRuta(String codigo) {
@@ -78,7 +106,7 @@ public class RutaDAO {
 
             while ((linea = br.readLine()) != null) {
 
-                String[] datos = linea.split(",");
+                String[] datos = linea.split(";");
 
                 if (datos[0].equals(codigo)) {
                     return linea;
@@ -92,68 +120,68 @@ public class RutaDAO {
 
         return null;
     }
-    public void actualizarRuta(Ruta ruta){
 
-    File temp = new File("temp.txt");
+    public void actualizarRuta(Ruta ruta) {
 
-    try (BufferedReader br = new BufferedReader(new FileReader(archivos));
-         FileWriter fw = new FileWriter(temp)) {
+        File temp = new File("temp.txt");
 
-        String linea;
+        try (BufferedReader br = new BufferedReader(new FileReader(archivos)); FileWriter fw = new FileWriter(temp)) {
 
-        while ((linea = br.readLine()) != null) {
+            String linea;
 
-            String[] datos = linea.split(",");
+            while ((linea = br.readLine()) != null) {
 
-            if (datos[0].equals(ruta.getCodigo())) {
+                String[] datos = linea.split(";");
 
-                fw.write(
-                    ruta.getCodigo() + "," +
-                    ruta.getOrigen() + "," +
-                    ruta.getDestino() + "," +
-                    ruta.getDistancia() + "\n"
-                );
+                if (datos[0].equals(ruta.getCodigo())) {
 
-            } else {
+                    fw.write(
+                            ruta.getCodigo() + ";"
+                            + ruta.getOrigen() + ";"
+                            + ruta.getDestino() + ";"
+                            + ruta.getDistancia() + ";"
+                            + ruta.getTiempo() + "\n"
+                    );
 
-                fw.write(linea + "\n");
+                } else {
 
-            }
-        }
+                    fw.write(linea + "\n");
 
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-
-    archivos.delete();
-    temp.renameTo(archivos);
-}
-    public void eliminarRuta(String codigo){
-
-    File temp = new File("temp.txt");
-
-    try (BufferedReader br = new BufferedReader(new FileReader(archivos));
-         FileWriter fw = new FileWriter(temp)) {
-
-        String linea;
-
-        while ((linea = br.readLine()) != null) {
-
-            String[] datos = linea.split(",");
-
-            if (!datos[0].equals(codigo)) {
-                fw.write(linea + "\n");
+                }
             }
 
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-    } catch (IOException e) {
-        e.printStackTrace();
+        archivos.delete();
+        temp.renameTo(archivos);
     }
 
-    archivos.delete();
-    temp.renameTo(archivos);
-}
-    
+    public void eliminarRuta(String codigo) {
+
+        File temp = new File("temp.txt");
+
+        try (BufferedReader br = new BufferedReader(new FileReader(archivos)); FileWriter fw = new FileWriter(temp)) {
+
+            String linea;
+
+            while ((linea = br.readLine()) != null) {
+
+                String[] datos = linea.split(";");
+
+                if (!datos[0].equals(codigo)) {
+                    fw.write(linea + "\n");
+                }
+
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        archivos.delete();
+        temp.renameTo(archivos);
+    }
 
 }

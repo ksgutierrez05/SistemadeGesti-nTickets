@@ -5,6 +5,8 @@ import sistemagestion.model.Conductor;
 import sistemagestion.model.Pasajero;
 import sistemagestion.model.PasajeroAdultoMayor;
 import java.util.List;
+import sistemagestion.model.PasajeroEstudiante;
+import sistemagestion.model.PasajeroRegular;
 public class PersonaService {
     private pasajeroDAO pasajeroDAO;
     private ConductorDAO conductorDAO;
@@ -87,17 +89,70 @@ public class PersonaService {
         pasajeroDAO.eliminarPasajero(documento);
         System.out.println("Pasajero eliminado exitosamente.");
     }
-    public void modificarPasajero(Pasajero pasajero) {
-        if (pasajero == null) {
+  public void modificarPasajero(Pasajero pasajero, String fechaCompra) {
+        ///cambio 4
+    if (pasajero == null) {
             throw new IllegalArgumentException("Pasajero nulo");
         }
+
         if (!pasajeroDAO.existePasajero(pasajero.getDocumento())) {
             throw new IllegalArgumentException("No existe pasajero con documento: " + pasajero.getDocumento());
         }
-        if (!pasajero.getFechaNacimiento().trim().isEmpty() && !fechaValida(pasajero.getFechaNacimiento())) {
+
+        if (pasajero.getDocumento() == null || pasajero.getDocumento().trim().isEmpty()) {
+            throw new IllegalArgumentException("El documento no puede estar vacío");
+        }
+
+        if (pasajero.getNombre() == null || pasajero.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre no puede estar vacío");
+        }
+
+        if (pasajero.getApellido() == null || pasajero.getApellido().trim().isEmpty()) {
+            throw new IllegalArgumentException("El apellido no puede estar vacío");
+        }
+
+        if (pasajero.getFechaNacimiento() == null || pasajero.getFechaNacimiento().trim().isEmpty()) {
+            throw new IllegalArgumentException("La fecha de nacimiento no puede estar vacía");
+        }
+
+        if (!fechaValida(pasajero.getFechaNacimiento())) {
             throw new IllegalArgumentException("Fecha de nacimiento inválida: " + pasajero.getFechaNacimiento());
         }
-        pasajeroDAO.modificarPasajero(pasajero);
+
+        int edad = pasajero.calcularEdad(fechaCompra);
+
+        Pasajero pasajeroActualizado;
+
+        if (edad >= 60) {
+            pasajeroActualizado = new PasajeroAdultoMayor(
+                    pasajero.getTipoDocumento(),
+                    pasajero.getDocumento(),
+                    pasajero.getNombre(),
+                    pasajero.getApellido(),
+                    pasajero.getTelefono(),
+                    pasajero.getFechaNacimiento()
+            );
+        } else if (pasajero instanceof PasajeroEstudiante) {
+            pasajeroActualizado = new PasajeroEstudiante(
+                    pasajero.getTipoDocumento(),
+                    pasajero.getDocumento(),
+                    pasajero.getNombre(),
+                    pasajero.getApellido(),
+                    pasajero.getTelefono(),
+                    pasajero.getFechaNacimiento()
+            );
+        } else {
+            pasajeroActualizado = new PasajeroRegular(
+                    pasajero.getTipoDocumento(),
+                    pasajero.getDocumento(),
+                    pasajero.getNombre(),
+                    pasajero.getApellido(),
+                    pasajero.getTelefono(),
+                    pasajero.getFechaNacimiento()
+            );
+        }
+
+        pasajeroDAO.modificarPasajero(pasajeroActualizado);
         System.out.println("Pasajero modificado exitosamente.");
     }
     public void registrarConductor(Conductor conductor) {

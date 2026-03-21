@@ -225,25 +225,66 @@ public class PersonaService {
         }
         return lista;
     }
-    public void modificarConductor(Conductor conductor) {
-        if (conductor == null) throw new IllegalArgumentException("Conductor nulo");
-        if (conductor.getNombre() == null || conductor.getNombre().trim().isEmpty())
-            throw new IllegalArgumentException("El nombre no puede estar vacío");
-        if (conductor.getApellido() == null || conductor.getApellido().trim().isEmpty())
-            throw new IllegalArgumentException("El apellido no puede estar vacío");
-        if (conductor.getTelefono() == null || conductor.getTelefono().trim().isEmpty())
-            throw new IllegalArgumentException("El teléfono no puede estar vacío");
-        if (conductor.getNumeroLicencia() == null || conductor.getNumeroLicencia().trim().isEmpty())
-            throw new IllegalArgumentException("El número de licencia no puede estar vacío");
-        if (conductor.getCategoriaLicencia() == null || conductor.getCategoriaLicencia().trim().isEmpty())
-            throw new IllegalArgumentException("La categoría de licencia no puede estar vacía");
-        if (conductor.getVencimientoLicencia() == null || conductor.getVencimientoLicencia().trim().isEmpty())
-            throw new IllegalArgumentException("El vencimiento de licencia no puede estar vacío");
-        if (conductorDAO.existeConductor(conductor.getDocumento()) == null)
-            throw new IllegalArgumentException("No existe conductor con documento: " + conductor.getDocumento());
-        conductorDAO.modificarConductor(conductor);
-        System.out.println("Conductor modificado exitosamente.");
+     public void modificarConductor(Conductor conductor) { 
+    if (conductor == null) {
+        throw new IllegalArgumentException("Conductor nulo");
     }
+
+    if (conductor.getDocumento() == null || conductor.getDocumento().trim().isEmpty()) {
+        throw new IllegalArgumentException("El documento no puede estar vacío");
+    }
+
+    if (!conductor.getDocumento().trim().matches("\\d+")) {
+        throw new IllegalArgumentException("Documento inválido: solo se permiten números");
+    }
+
+    if (conductorDAO.existeConductor(conductor.getDocumento().trim()) == null) {
+        throw new IllegalArgumentException("No existe conductor con documento: " + conductor.getDocumento());
+    }
+
+    if (conductor.getNombre() == null || conductor.getNombre().trim().isEmpty()) {
+        throw new IllegalArgumentException("El nombre no puede estar vacío");
+    }
+
+    if (conductor.getApellido() == null || conductor.getApellido().trim().isEmpty()) {
+        throw new IllegalArgumentException("El apellido no puede estar vacío");
+    }
+
+    if (conductor.getTelefono() == null || conductor.getTelefono().trim().isEmpty()) {
+        throw new IllegalArgumentException("El teléfono no puede estar vacío");
+    }
+
+    if (conductor.getNumeroLicencia() == null || conductor.getNumeroLicencia().trim().isEmpty()) {
+        throw new IllegalArgumentException("El número de licencia no puede estar vacío");
+    }
+
+    Conductor conductorConEsaLicencia = conductorDAO.existeLicencia(conductor.getNumeroLicencia().trim());
+    if (conductorConEsaLicencia != null &&
+        !conductorConEsaLicencia.getDocumento().trim().equals(conductor.getDocumento().trim())) {
+        throw new IllegalArgumentException("La licencia ya pertenece a otro conductor: " + conductor.getNumeroLicencia());
+    }
+
+    if (conductor.getCategoriaLicencia() == null || conductor.getCategoriaLicencia().trim().isEmpty()) {
+        throw new IllegalArgumentException("La categoría de licencia no puede estar vacía");
+    }
+
+    if (!conductor.getCategoriaLicencia().trim().equalsIgnoreCase("C1") &&
+        !conductor.getCategoriaLicencia().trim().equalsIgnoreCase("C2")) {
+        throw new IllegalArgumentException("Categoría de licencia no válida: solo se acepta C1 o C2");
+    }
+
+    if (conductor.getVencimientoLicencia() == null || conductor.getVencimientoLicencia().trim().isEmpty()) {
+        throw new IllegalArgumentException("El vencimiento de licencia no puede estar vacío");
+    }
+
+    if (!fechaValida(conductor.getVencimientoLicencia())) {
+        throw new IllegalArgumentException("Fecha de vencimiento inválida: " + conductor.getVencimientoLicencia());
+    }
+
+    conductorDAO.modificarConductor(conductor);
+    System.out.println("Conductor modificado exitosamente.");
+}
+
     public void eliminarConductor(String documento) {
         conductorDAO.eliminarConductor(documento);
     }

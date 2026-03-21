@@ -95,7 +95,38 @@ public class ConductorDAO {
         return buscarConductor(documento);
     }
 
-    public void modificarConductor(Conductor conductor) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+public void modificarConductor(Conductor conductor) {
+        List<Conductor> lista = listarConductores();
+        boolean encontrado = false;
+
+        for (int i = 0; i < lista.size(); i++) {
+            if (lista.get(i).getDocumento().equals(conductor.getDocumento())) {
+                lista.set(i, conductor);
+                encontrado = true;
+                break;
+            }
+        }
+
+        if (!encontrado) {
+            System.out.println("No se encontró el conductor para modificar.");
+            return;
+        }
+
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivoConductores, false))) {
+            for (Conductor c : lista) {
+                String linea = c.getTipoDocumento() + ";" +
+                               c.getDocumento() + ";" +
+                               c.getNombre() + ";" +
+                               c.getApellido() + ";" +
+                               c.getTelefono() + ";" +
+                               c.getNumeroLicencia() + ";" +
+                               c.getCategoriaLicencia() + ";" +
+                               c.getVencimientoLicencia();
+                bw.write(linea);
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Error modificando conductor: " + e.getMessage());
+        }
     }
-} 
+}

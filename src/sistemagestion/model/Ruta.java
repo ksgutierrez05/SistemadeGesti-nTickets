@@ -12,13 +12,13 @@ public class Ruta {
     private String codigo;
     private String origen;
     private String destino;
-    private double distancia;
+    private String distancia;
     private int tiempo;
 
     public Ruta() {
     }
 
-    public Ruta(String codigo, String origen, String destino, double distancia, int tiempo) {
+    public Ruta(String codigo, String origen, String destino, String distancia, int tiempo) {
         this.codigo = codigo;
         this.origen = origen;
         this.destino = destino;
@@ -38,7 +38,7 @@ public class Ruta {
         return destino;
     }
 
-    public double getDistancia() {
+    public String getDistancia() {
         return distancia;
     }
 
@@ -58,7 +58,7 @@ public class Ruta {
         this.destino = destino;
     }
 
-    public void setDistancia(double distancia) {
+    public void setDistancia(String distancia) {
         this.distancia = distancia;
     }
 

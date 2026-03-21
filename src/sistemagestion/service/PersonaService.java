@@ -119,6 +119,9 @@ public class PersonaService {
         if (conductor.getVencimientoLicencia() == null || conductor.getVencimientoLicencia().trim().isEmpty())
             throw new IllegalArgumentException("El vencimiento de licencia no puede estar vacío");
         conductorDAO.agregarConductor(conductor);
+            if (!fechaValida(conductor.getVencimientoLicencia())) {
+            throw new IllegalArgumentException("Fecha de nacimiento inválida: " + conductor.getVencimientoLicencia());
+        }
     }
     public Conductor buscarConductor(String documento) {
         Conductor c = conductorDAO.buscarConductor(documento);

@@ -12,7 +12,7 @@ public class PersonaService {
         this.pasajeroDAO = new pasajeroDAO();
         this.conductorDAO = new ConductorDAO();
     }
-    public void registrarPasajero(Pasajero pasajero, String fechaCompra) {
+        public void registrarPasajero(Pasajero pasajero, String fechaCompra) {
         if (pasajero == null) {
             throw new IllegalArgumentException("Pasajero nulo");
         }
@@ -40,17 +40,18 @@ public class PersonaService {
         int edad = pasajero.calcularEdad(fechaCompra);
         if (edad >= 60 && !(pasajero instanceof PasajeroAdultoMayor)) {
             pasajero = new PasajeroAdultoMayor(
-                pasajero.getTipoDocumento(),
-                pasajero.getDocumento(),
-                pasajero.getNombre(),
-                pasajero.getApellido(),
-                pasajero.getTelefono(),
-                pasajero.getFechaNacimiento()
+                    pasajero.getTipoDocumento(),
+                    pasajero.getDocumento(),
+                    pasajero.getNombre(),
+                    pasajero.getApellido(),
+                    pasajero.getTelefono(),
+                    pasajero.getFechaNacimiento()
             );
         }
         pasajeroDAO.agregarPasajero(pasajero);
         System.out.println("Pasajero registrado exitosamente.");
     }
+        
     private boolean fechaValida(String fecha) {
         if (fecha == null || fecha.trim().isEmpty()) return false;
         String[] partes = fecha.split("-");

@@ -9,6 +9,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import sistemagestion.model.Bus;
+import sistemagestion.model.Buseta;
+import sistemagestion.model.Microbus;
+import sistemagestion.model.Ruta;
 import sistemagestion.model.Vehiculo;
 
 /**
@@ -17,6 +23,7 @@ import sistemagestion.model.Vehiculo;
  */
 public class VehiculoDAO {
     private File archivos;
+    private RutaDAO rutaDAO = new RutaDAO();
     
     public VehiculoDAO () {
         archivos = new File("vehiculo.txt");
@@ -49,20 +56,76 @@ public class VehiculoDAO {
             e.printStackTrace();
         }
     }
-    
-    
-    public void listarVehiculos(){
+     public List<Vehiculo> obtenerVehiculos() {
+        List<Vehiculo> lista = new ArrayList<>();
+
         try (BufferedReader br = new BufferedReader(new FileReader(archivos))) {
+            String linea;
 
-        String linea;
+            while ((linea = br.readLine()) != null) {
+                String[] datos = linea.split(";");
 
-        while ((linea = br.readLine()) != null) {
-            System.out.println(linea);
+                String tipo = datos[0];
+                String placa = datos[1];
+                String codigoRuta = datos[2];
+                boolean disponible = Boolean.parseBoolean(datos[3]);
+                int capacidad = Integer.parseInt(datos[4]);
+                double tarifa = Double.parseDouble(datos[5]);
+
+                
+                Ruta ruta = rutaDAO.obtenerRutas()
+                        .stream()
+                        .filter(r -> r.getCodigo().equalsIgnoreCase(codigoRuta))
+                        .findFirst()
+                        .orElse(null);
+
+                Vehiculo v;
+                if (tipo.equalsIgnoreCase("Bus")) {
+                    v = new Bus(ruta, placa, disponible, capacidad, (float) tarifa);
+                } else if (tipo.equalsIgnoreCase("Buseta")) {
+                    v = new Buseta(ruta, placa, disponible, capacidad, (float) tarifa);
+                } else {
+                    v = new Microbus(ruta, placa, disponible, capacidad, (float) tarifa);
+                }
+
+                lista.add(v);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-    } catch (IOException e) {
-        e.printStackTrace();
+        return lista;
     }
+    
+    
+     public void listarVehiculos() {
+        List<Vehiculo> lista = obtenerVehiculos();
+
+        if (lista.isEmpty()) {
+            System.out.println("No hay vehiculos registrados.");
+            return;
+        }
+
+        for (Vehiculo v : lista) {
+            System.out.println("---------------");
+            System.out.println("Tipo: " + v.getClass().getSimpleName());
+            System.out.println("Placa: " + v.getPlaca());
+            System.out.println("Disponible: " + v.isDisponible());
+            System.out.println("Capacidad: " + v.getCapacidad());
+            System.out.println("Tarifa: " + v.getTarifaBase());
+
+            if (v.getRuta() != null) {
+                System.out.println("Ruta:");
+                System.out.println("  Codigo: " + v.getRuta().getCodigo());
+                System.out.println("  Origen: " + v.getRuta().getOrigen());
+                System.out.println("  Destino: " + v.getRuta().getDestino());
+                System.out.println("  Distancia: " + v.getRuta().getDistancia());
+                System.out.println("  Tiempo: " + v.getRuta().getTiempo());
+            } else {
+                System.out.println("Sin ruta asignada");
+            }
+        }
     }
     
     

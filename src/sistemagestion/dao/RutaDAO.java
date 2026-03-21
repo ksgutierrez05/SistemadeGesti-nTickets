@@ -76,7 +76,7 @@ public class RutaDAO {
                             datos[0],
                             datos[1],
                             datos[2],
-                            Double.parseDouble(datos[3].replace(",", ".")),
+                            datos[3],
                             Integer.parseInt(datos[4])
                     );
 

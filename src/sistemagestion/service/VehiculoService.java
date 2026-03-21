@@ -4,7 +4,9 @@
  */
 package sistemagestion.service;
 
+import java.util.List;
 import sistemagestion.dao.VehiculoDAO;
+import sistemagestion.model.Ruta;
 import sistemagestion.model.Vehiculo;
 
 /**
@@ -46,6 +48,15 @@ public class VehiculoService {
         }
 
     }
+    public List<Ruta> obtenerRutasDisponibles(RutaService rutaService) {
+    List<Ruta> rutas = rutaService.listarRutas();
+    
+    if (rutas.isEmpty()) {
+        System.out.println("No hay rutas registradas.");
+    }
+
+    return rutas; 
+}
     
    public void listarVehiculos(){
     if (vehiculoDAO != null) {

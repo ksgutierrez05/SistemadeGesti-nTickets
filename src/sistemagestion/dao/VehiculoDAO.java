@@ -104,6 +104,7 @@ public class VehiculoDAO {
             if (datos[1].equals(vehiculo.getPlaca())) {
 
                 fw.write(
+                    vehiculo.getClass().getSimpleName() + ";" +
                     vehiculo.getPlaca() + ";" +
                     vehiculo.getRuta().getCodigo() + ";" +
                     vehiculo.isDisponible() + ";" +

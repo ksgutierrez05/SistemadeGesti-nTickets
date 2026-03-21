@@ -19,7 +19,6 @@ import sistemagestion.model.Ruta;
 import sistemagestion.model.Ticket;
 import sistemagestion.model.Vehiculo;
 
-
 public class TicketDAO {
 
     private final String archivoTickets = "tickets.txt";
@@ -35,23 +34,23 @@ public class TicketDAO {
             Pasajero p = ticket.getPasajero();
             Vehiculo v = ticket.getVehiculo();
 
-            String linea = ticket.getCodigo() + ";" +
-                           p.getClass().getSimpleName() + ";" +
-                           p.getTipoDocumento() + ";" +
-                           p.getDocumento() + ";" +
-                           p.getNombre() + ";" +
-                           p.getApellido() + ";" +
-                           p.getTelefono() + ";" +
-                           p.getFechaNacimiento() + ";" +
-                           ticket.getPrecioBase() + ";" +
-                           ticket.getDescuento() + ";" +
-                           ticket.getValorFinal() + ";" +
-                           ticket.getFechaCompra() + ";" +
-                           v.getClass().getSimpleName() + ";" +
-                           v.getPlaca() + ";" +
-                           v.getRuta().getCodigo() + ";" +
-                           v.getRuta().getOrigen() + ";" +
-                           v.getRuta().getDestino();
+            String linea = ticket.getCodigo() + ";"
+                    + p.getClass().getSimpleName() + ";"
+                    + p.getTipoDocumento() + ";"
+                    + p.getDocumento() + ";"
+                    + p.getNombre() + ";"
+                    + p.getApellido() + ";"
+                    + p.getTelefono() + ";"
+                    + p.getFechaNacimiento() + ";"
+                    + ticket.getPrecioBase() + ";"
+                    + ticket.getDescuento() + ";"
+                    + ticket.getValorFinal() + ";"
+                    + ticket.getFechaCompra() + ";"
+                    + v.getClass().getSimpleName() + ";"
+                    + v.getPlaca() + ";"
+                    + v.getRuta().getCodigo() + ";"
+                    + v.getRuta().getOrigen() + ";"
+                    + v.getRuta().getDestino();
 
             bw.write(linea);
             bw.newLine();
@@ -61,82 +60,92 @@ public class TicketDAO {
         }
     }
 
-public List<Ticket> listarTickets() {
-    List<Ticket> lista = new ArrayList<>();
-    try (BufferedReader br = new BufferedReader(new FileReader(archivoTickets))) {
-        String linea;
-        while ((linea = br.readLine()) != null) {
-            if (linea.trim().isEmpty()) continue;
-            String[] partes = linea.split(";");
-            if (partes.length < 17) continue;
+    public List<Ticket> listarTickets() {
+        List<Ticket> lista = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(archivoTickets))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                if (linea.trim().isEmpty()) {
+                    continue;
+                }
+                String[] partes = linea.split(";");
+                if (partes.length < 18) {
+                    continue;
+                }
 
-            String codigo          = partes[0];
-            String tipoPasajero    = partes[1];
-            String tipoDoc         = partes[2];
-            String documento       = partes[3];
-            String nombre          = partes[4];
-            String apellido        = partes[5];
-            String telefono        = partes[6];
-            String fechaNacimiento = partes[7];
-            double precioBase      = Double.parseDouble(partes[8]);
-            double descuento       = Double.parseDouble(partes[9]);
-            double valorFinal      = Double.parseDouble(partes[10]);
-            String fechaCompra     = partes[11];
+                String codigo = partes[0];
+                String tipoPasajero = partes[1];
+                String tipoDoc = partes[2];
+                String documento = partes[3];
+                String nombre = partes[4];
+                String apellido = partes[5];
+                String telefono = partes[6];
+                String fechaNacimiento = partes[7];
+                double precioBase = Double.parseDouble(partes[8]);
+                double descuento = Double.parseDouble(partes[9]);
+                double valorFinal = Double.parseDouble(partes[10]);
+                String fechaCompra = partes[11];
 
-            Pasajero p;
-            switch (tipoPasajero) {
-                case "PasajeroEstudiante":
-                    p = new PasajeroEstudiante(tipoDoc, documento, nombre, apellido, telefono, fechaNacimiento);
-                    break;
-                case "PasajeroAdultoMayor":
-                    p = new PasajeroAdultoMayor(tipoDoc, documento, nombre, apellido, telefono, fechaNacimiento);
-                    break;
-                default:
-                    p = new PasajeroRegular(tipoDoc, documento, nombre, apellido, telefono, fechaNacimiento);
-                    break;
+                Pasajero p;
+                switch (tipoPasajero) {
+                    case "PasajeroEstudiante":
+                        p = new PasajeroEstudiante(tipoDoc, documento, nombre, apellido, telefono, fechaNacimiento);
+                        break;
+                    case "PasajeroAdultoMayor":
+                        p = new PasajeroAdultoMayor(tipoDoc, documento, nombre, apellido, telefono, fechaNacimiento);
+                        break;
+                    default:
+                        p = new PasajeroRegular(tipoDoc, documento, nombre, apellido, telefono, fechaNacimiento);
+                        break;
+                }
+
+                if (partes.length < 17) {
+                    continue;
+                }
+
+                String tipoVehiculo = partes[12];
+                String placa = partes[13];
+                String codigoRuta = partes[14];
+                String origen = partes[15];
+                String destino = partes[16];
+
+                String distancia ="0";
+                int tiempo = 0;
+
+                Ruta ruta = new Ruta(codigoRuta, origen, destino, distancia, tiempo);
+
+                Vehiculo vehiculo = null;
+                if (tipoVehiculo.equalsIgnoreCase("Bus")) {
+                    vehiculo = new Bus(ruta, placa, true, 45, 15000f);
+                } else if (tipoVehiculo.equalsIgnoreCase("Buseta")) {
+                    vehiculo = new Buseta(ruta, placa, true, 19, 8000f);
+                } else if (tipoVehiculo.equalsIgnoreCase("MicroBus")) {
+                    vehiculo = new Microbus(ruta, placa, true, 25, 10000f);
+                } else {
+                    System.out.println("Tipo de vehículo desconocido: " + tipoVehiculo + " — Ticket ignorado.");
+                    continue;
+                }
+
+                Ticket t = new Ticket(codigo, p, vehiculo, precioBase, fechaCompra);
+                t.setPrecioBase(precioBase);
+                t.setDescuento(descuento);
+                t.setValorFinal(valorFinal);
+
+                lista.add(t);
             }
-
-            String tipoVehiculo = partes[12];
-            String placa        = partes[13];
-            String codigoRuta   = partes[14];
-            String origen       = partes[15];
-            String destino      = partes[16];
-
-            double distancia = 0;
-            int tiempo = 0;
-
-            Ruta ruta = new Ruta(codigoRuta, origen, destino, distancia, tiempo);
-
-            Vehiculo vehiculo = null;
-            if (tipoVehiculo.equalsIgnoreCase("Bus")) {
-                vehiculo = new Bus(ruta, placa, true, 45, 15000f);
-            } else if (tipoVehiculo.equalsIgnoreCase("Buseta")) {
-                vehiculo = new Buseta(ruta, placa, true, 19, 8000f);
-            } else if (tipoVehiculo.equalsIgnoreCase("Microbus")) {
-                vehiculo = new Microbus(ruta, placa, true, 25, 10000f);
-            } else {
-                System.out.println("Tipo de vehículo desconocido: " + tipoVehiculo + " — Ticket ignorado.");
-                continue;
-            }
-
-            Ticket t = new Ticket(codigo, p, vehiculo, precioBase, fechaCompra);
-            t.setPrecioBase(precioBase);
-            t.setDescuento(descuento);
-            t.setValorFinal(valorFinal);
-
-            lista.add(t);
+        } catch (FileNotFoundException e) {
+            System.out.println("Archivo tickets.txt no encontrado, se creará al guardar.");
+        } catch (IOException e) {
+            System.out.println("Error leyendo tickets: " + e.getMessage());
         }
-    } catch (FileNotFoundException e) {
-        System.out.println("Archivo tickets.txt no encontrado, se creará al guardar.");
-    } catch (IOException e) {
-        System.out.println("Error leyendo tickets: " + e.getMessage());
+        return lista;
     }
-    return lista;
-}
 
     public Ticket buscarTicket(String codigo) {
         for (Ticket t : listarTickets()) {
-            if (t.getCodigo().equalsIgnoreCase(codigo)) return t;
+            if (t.getCodigo().equalsIgnoreCase(codigo)) {
+                return t;
+            }
         }
         return null;
     }
@@ -148,23 +157,23 @@ public List<Ticket> listarTickets() {
             for (Ticket ticket : lista) {
                 Pasajero p = ticket.getPasajero();
                 Vehiculo v = ticket.getVehiculo();
-                String linea = ticket.getCodigo() + ";" +
-                               p.getClass().getSimpleName() + ";" +
-                               p.getTipoDocumento() + ";" +
-                               p.getDocumento() + ";" +
-                               p.getNombre() + ";" +
-                               p.getApellido() + ";" +
-                               p.getTelefono() + ";" +
-                               p.getFechaNacimiento() + ";" +
-                               ticket.getPrecioBase() + ";" +
-                               ticket.getDescuento() + ";" +
-                               ticket.getValorFinal() + ";" +
-                               ticket.getFechaCompra() + ";" +
-                               v.getClass().getSimpleName() + ";" +
-                               v.getPlaca() + ";" +
-                               v.getRuta().getCodigo() + ";" +
-                               v.getRuta().getOrigen() + ";" +
-                               v.getRuta().getDestino();
+                String linea = ticket.getCodigo() + ";"
+                        + p.getClass().getSimpleName() + ";"
+                        + p.getTipoDocumento() + ";"
+                        + p.getDocumento() + ";"
+                        + p.getNombre() + ";"
+                        + p.getApellido() + ";"
+                        + p.getTelefono() + ";"
+                        + p.getFechaNacimiento() + ";"
+                        + ticket.getPrecioBase() + ";"
+                        + ticket.getDescuento() + ";"
+                        + ticket.getValorFinal() + ";"
+                        + ticket.getFechaCompra() + ";"
+                        + v.getClass().getSimpleName() + ";"
+                        + v.getPlaca() + ";"
+                        + v.getRuta().getCodigo() + ";"
+                        + v.getRuta().getOrigen() + ";"
+                        + v.getRuta().getDestino();
                 bw.write(linea);
                 bw.newLine();
             }
@@ -176,7 +185,9 @@ public List<Ticket> listarTickets() {
     public List<Ticket> ticketsPorFecha(String fecha) {
         List<Ticket> resultado = new ArrayList<>();
         for (Ticket t : listarTickets()) {
-            if (t.getFechaCompra().equals(fecha)) resultado.add(t);
+            if (t.getFechaCompra().equals(fecha)) {
+                resultado.add(t);
+            }
         }
         return resultado;
     }
@@ -184,7 +195,9 @@ public List<Ticket> listarTickets() {
     public List<Ticket> ticketsPorTipoPasajero(String tipo) {
         List<Ticket> resultado = new ArrayList<>();
         for (Ticket t : listarTickets()) {
-            if (t.getPasajero().getClass().getSimpleName().equalsIgnoreCase(tipo)) resultado.add(t);
+            if (t.getPasajero().getClass().getSimpleName().equalsIgnoreCase(tipo)) {
+                resultado.add(t);
+            }
         }
         return resultado;
     }
@@ -192,8 +205,8 @@ public List<Ticket> listarTickets() {
     public List<Ticket> ticketsPorTipoVehiculo(String tipoVehiculo) {
         List<Ticket> resultado = new ArrayList<>();
         for (Ticket t : listarTickets()) {
-            if (t.getVehiculo() != null &&
-                t.getVehiculo().getClass().getSimpleName().equalsIgnoreCase(tipoVehiculo)) {
+            if (t.getVehiculo() != null
+                    && t.getVehiculo().getClass().getSimpleName().equalsIgnoreCase(tipoVehiculo)) {
                 resultado.add(t);
             }
         }
@@ -216,8 +229,8 @@ public List<Ticket> listarTickets() {
     public List<Ticket> ticketsPorPasajeroYFecha(Pasajero pasajero, String fechaCompra) {
         List<Ticket> resultado = new ArrayList<>();
         for (Ticket t : listarTickets()) {
-            if (t.getPasajero().getDocumento().equalsIgnoreCase(pasajero.getDocumento()) &&
-                t.getFechaCompra().equals(fechaCompra)) {
+            if (t.getPasajero().getDocumento().equalsIgnoreCase(pasajero.getDocumento())
+                    && t.getFechaCompra().equals(fechaCompra)) {
                 resultado.add(t);
             }
         }

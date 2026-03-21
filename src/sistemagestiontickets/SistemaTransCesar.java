@@ -4,10 +4,15 @@
  */
 package sistemagestiontickets;
 
+import sistemagestion.view.Menu;
+
 /**
  *
  * @author Lenovo
  */
 public class SistemaTransCesar {
-    
+    public static void main(String[] args) {
+        Menu menu = new Menu();
+        menu.iniciar();
+    }
 }

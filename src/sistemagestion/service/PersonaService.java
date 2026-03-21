@@ -5,6 +5,8 @@ import sistemagestion.model.Conductor;
 import sistemagestion.model.Pasajero;
 import sistemagestion.model.PasajeroAdultoMayor;
 import java.util.List;
+import sistemagestion.model.PasajeroEstudiante;
+import sistemagestion.model.PasajeroRegular;
 public class PersonaService {
     private pasajeroDAO pasajeroDAO;
     private ConductorDAO conductorDAO;
@@ -12,7 +14,7 @@ public class PersonaService {
         this.pasajeroDAO = new pasajeroDAO();
         this.conductorDAO = new ConductorDAO();
     }
-    public void registrarPasajero(Pasajero pasajero, String fechaCompra) {
+        public void registrarPasajero(Pasajero pasajero, String fechaCompra) {
         if (pasajero == null) {
             throw new IllegalArgumentException("Pasajero nulo");
         }
@@ -40,17 +42,18 @@ public class PersonaService {
         int edad = pasajero.calcularEdad(fechaCompra);
         if (edad >= 60 && !(pasajero instanceof PasajeroAdultoMayor)) {
             pasajero = new PasajeroAdultoMayor(
-                pasajero.getTipoDocumento(),
-                pasajero.getDocumento(),
-                pasajero.getNombre(),
-                pasajero.getApellido(),
-                pasajero.getTelefono(),
-                pasajero.getFechaNacimiento()
+                    pasajero.getTipoDocumento(),
+                    pasajero.getDocumento(),
+                    pasajero.getNombre(),
+                    pasajero.getApellido(),
+                    pasajero.getTelefono(),
+                    pasajero.getFechaNacimiento()
             );
         }
         pasajeroDAO.agregarPasajero(pasajero);
         System.out.println("Pasajero registrado exitosamente.");
     }
+        
     private boolean fechaValida(String fecha) {
         if (fecha == null || fecha.trim().isEmpty()) return false;
         String[] partes = fecha.split("-");
@@ -86,40 +89,130 @@ public class PersonaService {
         pasajeroDAO.eliminarPasajero(documento);
         System.out.println("Pasajero eliminado exitosamente.");
     }
-    public void modificarPasajero(Pasajero pasajero) {
-        if (pasajero == null) {
+  public void modificarPasajero(Pasajero pasajero, String fechaCompra) {
+        ///cambio 4
+    if (pasajero == null) {
             throw new IllegalArgumentException("Pasajero nulo");
         }
+
         if (!pasajeroDAO.existePasajero(pasajero.getDocumento())) {
             throw new IllegalArgumentException("No existe pasajero con documento: " + pasajero.getDocumento());
         }
-        if (!pasajero.getFechaNacimiento().trim().isEmpty() && !fechaValida(pasajero.getFechaNacimiento())) {
+
+        if (pasajero.getDocumento() == null || pasajero.getDocumento().trim().isEmpty()) {
+            throw new IllegalArgumentException("El documento no puede estar vacío");
+        }
+
+        if (pasajero.getNombre() == null || pasajero.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre no puede estar vacío");
+        }
+
+        if (pasajero.getApellido() == null || pasajero.getApellido().trim().isEmpty()) {
+            throw new IllegalArgumentException("El apellido no puede estar vacío");
+        }
+
+        if (pasajero.getFechaNacimiento() == null || pasajero.getFechaNacimiento().trim().isEmpty()) {
+            throw new IllegalArgumentException("La fecha de nacimiento no puede estar vacía");
+        }
+
+        if (!fechaValida(pasajero.getFechaNacimiento())) {
             throw new IllegalArgumentException("Fecha de nacimiento inválida: " + pasajero.getFechaNacimiento());
         }
-        pasajeroDAO.modificarPasajero(pasajero);
+
+        int edad = pasajero.calcularEdad(fechaCompra);
+
+        Pasajero pasajeroActualizado;
+
+        if (edad >= 60) {
+            pasajeroActualizado = new PasajeroAdultoMayor(
+                    pasajero.getTipoDocumento(),
+                    pasajero.getDocumento(),
+                    pasajero.getNombre(),
+                    pasajero.getApellido(),
+                    pasajero.getTelefono(),
+                    pasajero.getFechaNacimiento()
+            );
+        } else if (pasajero instanceof PasajeroEstudiante) {
+            pasajeroActualizado = new PasajeroEstudiante(
+                    pasajero.getTipoDocumento(),
+                    pasajero.getDocumento(),
+                    pasajero.getNombre(),
+                    pasajero.getApellido(),
+                    pasajero.getTelefono(),
+                    pasajero.getFechaNacimiento()
+            );
+        } else {
+            pasajeroActualizado = new PasajeroRegular(
+                    pasajero.getTipoDocumento(),
+                    pasajero.getDocumento(),
+                    pasajero.getNombre(),
+                    pasajero.getApellido(),
+                    pasajero.getTelefono(),
+                    pasajero.getFechaNacimiento()
+            );
+        }
+
+        pasajeroDAO.modificarPasajero(pasajeroActualizado);
         System.out.println("Pasajero modificado exitosamente.");
     }
-    public void registrarConductor(Conductor conductor) {
-        if (conductor == null) throw new IllegalArgumentException("Conductor nulo");
-        if (conductor.getDocumento() == null || conductor.getDocumento().trim().isEmpty())
+    public void registrarConductor(Conductor conductor) { 
+        if (conductor == null) {
+            throw new IllegalArgumentException("Conductor nulo");
+        }
+
+        if (conductor.getDocumento() == null || conductor.getDocumento().trim().isEmpty()) {
             throw new IllegalArgumentException("El documento no puede estar vacío");
-        if (conductor.getNombre() == null || conductor.getNombre().trim().isEmpty())
+        }
+
+        if (!conductor.getDocumento().trim().matches("\\d+")) {
+            throw new IllegalArgumentException("Documento inválido: solo se permiten números");
+        }
+
+        if (conductorDAO.existeConductor(conductor.getDocumento().trim()) != null) {
+            throw new IllegalArgumentException("Ya existe un conductor con el documento: " + conductor.getDocumento());
+        }
+
+        if (conductor.getNombre() == null || conductor.getNombre().trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre no puede estar vacío");
-        if (conductor.getApellido() == null || conductor.getApellido().trim().isEmpty())
+        }
+
+        if (conductor.getApellido() == null || conductor.getApellido().trim().isEmpty()) {
             throw new IllegalArgumentException("El apellido no puede estar vacío");
-        if (conductor.getTelefono() == null || conductor.getTelefono().trim().isEmpty())
+        }
+
+        if (conductor.getTelefono() == null || conductor.getTelefono().trim().isEmpty()) {
             throw new IllegalArgumentException("El teléfono no puede estar vacío");
-        if (conductor.getNumeroLicencia() == null || conductor.getNumeroLicencia().trim().isEmpty())
+        }
+
+        if (conductor.getNumeroLicencia() == null || conductor.getNumeroLicencia().trim().isEmpty()) {
             throw new IllegalArgumentException("El número de licencia no puede estar vacío");
-        if (conductor.getCategoriaLicencia() == null || conductor.getCategoriaLicencia().trim().isEmpty())
+        }
+
+        if (conductorDAO.existeLicencia(conductor.getNumeroLicencia().trim()) != null) {
+            throw new IllegalArgumentException("Ya existe un conductor con la licencia: " + conductor.getNumeroLicencia());
+        }
+
+        if (conductor.getCategoriaLicencia() == null || conductor.getCategoriaLicencia().trim().isEmpty()) {
             throw new IllegalArgumentException("La categoría de licencia no puede estar vacía");
-        if (!conductor.getCategoriaLicencia().trim().equalsIgnoreCase("C1") &&
-            !conductor.getCategoriaLicencia().trim().equalsIgnoreCase("C2"))
+        }
+
+        if (!conductor.getCategoriaLicencia().trim().equalsIgnoreCase("C1")
+                && !conductor.getCategoriaLicencia().trim().equalsIgnoreCase("C2")) {
             throw new IllegalArgumentException("Categoría de licencia no válida: solo se acepta C1 o C2");
-        if (conductor.getVencimientoLicencia() == null || conductor.getVencimientoLicencia().trim().isEmpty())
+        }
+
+        if (conductor.getVencimientoLicencia() == null || conductor.getVencimientoLicencia().trim().isEmpty()) {
             throw new IllegalArgumentException("El vencimiento de licencia no puede estar vacío");
+        }
+
+        if (!fechaValida(conductor.getVencimientoLicencia())) {
+            throw new IllegalArgumentException("Fecha de vencimiento inválida: " + conductor.getVencimientoLicencia());
+        }
+
         conductorDAO.agregarConductor(conductor);
+        System.out.println("Conductor registrado exitosamente.");
     }
+
     public Conductor buscarConductor(String documento) {
         Conductor c = conductorDAO.buscarConductor(documento);
         if (c == null) throw new IllegalArgumentException("Conductor no encontrado: " + documento);
@@ -132,25 +225,66 @@ public class PersonaService {
         }
         return lista;
     }
-    public void modificarConductor(Conductor conductor) {
-        if (conductor == null) throw new IllegalArgumentException("Conductor nulo");
-        if (conductor.getNombre() == null || conductor.getNombre().trim().isEmpty())
-            throw new IllegalArgumentException("El nombre no puede estar vacío");
-        if (conductor.getApellido() == null || conductor.getApellido().trim().isEmpty())
-            throw new IllegalArgumentException("El apellido no puede estar vacío");
-        if (conductor.getTelefono() == null || conductor.getTelefono().trim().isEmpty())
-            throw new IllegalArgumentException("El teléfono no puede estar vacío");
-        if (conductor.getNumeroLicencia() == null || conductor.getNumeroLicencia().trim().isEmpty())
-            throw new IllegalArgumentException("El número de licencia no puede estar vacío");
-        if (conductor.getCategoriaLicencia() == null || conductor.getCategoriaLicencia().trim().isEmpty())
-            throw new IllegalArgumentException("La categoría de licencia no puede estar vacía");
-        if (conductor.getVencimientoLicencia() == null || conductor.getVencimientoLicencia().trim().isEmpty())
-            throw new IllegalArgumentException("El vencimiento de licencia no puede estar vacío");
-        if (conductorDAO.existeConductor(conductor.getDocumento()) == null)
-            throw new IllegalArgumentException("No existe conductor con documento: " + conductor.getDocumento());
-        conductorDAO.modificarConductor(conductor);
-        System.out.println("Conductor modificado exitosamente.");
+     public void modificarConductor(Conductor conductor) { 
+    if (conductor == null) {
+        throw new IllegalArgumentException("Conductor nulo");
     }
+
+    if (conductor.getDocumento() == null || conductor.getDocumento().trim().isEmpty()) {
+        throw new IllegalArgumentException("El documento no puede estar vacío");
+    }
+
+    if (!conductor.getDocumento().trim().matches("\\d+")) {
+        throw new IllegalArgumentException("Documento inválido: solo se permiten números");
+    }
+
+    if (conductorDAO.existeConductor(conductor.getDocumento().trim()) == null) {
+        throw new IllegalArgumentException("No existe conductor con documento: " + conductor.getDocumento());
+    }
+
+    if (conductor.getNombre() == null || conductor.getNombre().trim().isEmpty()) {
+        throw new IllegalArgumentException("El nombre no puede estar vacío");
+    }
+
+    if (conductor.getApellido() == null || conductor.getApellido().trim().isEmpty()) {
+        throw new IllegalArgumentException("El apellido no puede estar vacío");
+    }
+
+    if (conductor.getTelefono() == null || conductor.getTelefono().trim().isEmpty()) {
+        throw new IllegalArgumentException("El teléfono no puede estar vacío");
+    }
+
+    if (conductor.getNumeroLicencia() == null || conductor.getNumeroLicencia().trim().isEmpty()) {
+        throw new IllegalArgumentException("El número de licencia no puede estar vacío");
+    }
+
+    Conductor conductorConEsaLicencia = conductorDAO.existeLicencia(conductor.getNumeroLicencia().trim());
+    if (conductorConEsaLicencia != null &&
+        !conductorConEsaLicencia.getDocumento().trim().equals(conductor.getDocumento().trim())) {
+        throw new IllegalArgumentException("La licencia ya pertenece a otro conductor: " + conductor.getNumeroLicencia());
+    }
+
+    if (conductor.getCategoriaLicencia() == null || conductor.getCategoriaLicencia().trim().isEmpty()) {
+        throw new IllegalArgumentException("La categoría de licencia no puede estar vacía");
+    }
+
+    if (!conductor.getCategoriaLicencia().trim().equalsIgnoreCase("C1") &&
+        !conductor.getCategoriaLicencia().trim().equalsIgnoreCase("C2")) {
+        throw new IllegalArgumentException("Categoría de licencia no válida: solo se acepta C1 o C2");
+    }
+
+    if (conductor.getVencimientoLicencia() == null || conductor.getVencimientoLicencia().trim().isEmpty()) {
+        throw new IllegalArgumentException("El vencimiento de licencia no puede estar vacío");
+    }
+
+    if (!fechaValida(conductor.getVencimientoLicencia())) {
+        throw new IllegalArgumentException("Fecha de vencimiento inválida: " + conductor.getVencimientoLicencia());
+    }
+
+    conductorDAO.modificarConductor(conductor);
+    System.out.println("Conductor modificado exitosamente.");
+}
+
     public void eliminarConductor(String documento) {
         conductorDAO.eliminarConductor(documento);
     }

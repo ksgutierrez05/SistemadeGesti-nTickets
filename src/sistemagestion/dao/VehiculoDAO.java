@@ -7,6 +7,7 @@ package sistemagestion.dao;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -22,83 +23,105 @@ import sistemagestion.model.Vehiculo;
 /**
  *
  * @author Lenovo
- */
-public class VehiculoDAO {
+ */public class VehiculoDAO {
 
-    private File archivos;
-
+    private final String archivoVehiculos = "vehiculos.txt";
     private RutaDAO rutaDAO = new RutaDAO();
     private ConductorDAO conductorDAO = new ConductorDAO();
 
-    public VehiculoDAO() {
-        archivos = new File("vehiculo.txt");
+    
+    public void guardarVehiculo(Vehiculo v) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivoVehiculos, true))) {
 
-        try {
-            if (!archivos.exists()) {
-                archivos.createNewFile();
-                System.out.println("Archivo creado");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+            String documentoConductor = (v.getConductor() != null)
+                    ? v.getConductor().getDocumento()
+                    : "null";
 
-    public void guardarVehiculo(Vehiculo vehiculo) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivos, true))) {
-            String linea = vehiculo.getClass().getSimpleName() + ";"
-                    + vehiculo.getPlaca() + ";"
-                    + (vehiculo.getRuta() != null ? vehiculo.getRuta().getCodigo() : "null") + ";"
-                    + vehiculo.isDisponible() + ";"
-                    + vehiculo.getCapacidad() + ";"
-                    + vehiculo.getTarifaBase() + ";"
-                    + (vehiculo.getConductor() != null ? vehiculo.getConductor().getDocumento() : "null");
+            String linea = v.getClass().getSimpleName() + ";"
+                    + v.getPlaca() + ";"
+                    + v.getRuta().getCodigo() + ";"
+                    + v.isDisponible() + ";"
+                    + v.getCapacidad() + ";"
+                    + v.getTarifaBase() + ";"
+                    + documentoConductor;
+
             bw.write(linea);
             bw.newLine();
+
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Error guardando vehículo: " + e.getMessage());
         }
     }
 
+    
     public List<Vehiculo> obtenerVehiculos() {
         List<Vehiculo> lista = new ArrayList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(archivos))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(archivoVehiculos))) {
             String linea;
 
             while ((linea = br.readLine()) != null) {
+
+                if (linea.trim().isEmpty()) continue;
+
                 String[] datos = linea.split(";");
+
+                // 🔴 VALIDACIÓN CLAVE
+                if (datos.length < 6) {
+                    System.out.println("Línea inválida: " + linea);
+                    continue;
+                }
 
                 String tipo = datos[0];
                 String placa = datos[1];
                 String codigoRuta = datos[2];
                 boolean disponible = Boolean.parseBoolean(datos[3]);
                 int capacidad = Integer.parseInt(datos[4]);
-                double tarifa = Double.parseDouble(datos[5]);
-                String documentoConductor = datos[6];
-                Conductor conductor = conductorDAO.obtenerConductores()
-                        .stream()
-                        .filter(c -> c.getDocumento().equalsIgnoreCase(documentoConductor))
-                        .findFirst()
-                        .orElse(null);
+                float tarifa = Float.parseFloat(datos[5]);
 
+                // 🟡 Conductor opcional
+                Conductor conductor = null;
+                if (datos.length > 6 && !datos[6].equalsIgnoreCase("null")) {
+                    String documentoConductor = datos[6];
+
+                    conductor = conductorDAO.listarConductores()
+                            .stream()
+                            .filter(c -> c.getDocumento().equalsIgnoreCase(documentoConductor))
+                            .findFirst()
+                            .orElse(null);
+                }
+
+                // 🔵 Buscar ruta
                 Ruta ruta = rutaDAO.obtenerRutas()
                         .stream()
                         .filter(r -> r.getCodigo().equalsIgnoreCase(codigoRuta))
                         .findFirst()
                         .orElse(null);
 
+                if (ruta == null) {
+                    System.out.println("Ruta no encontrada para vehículo: " + placa);
+                    continue;
+                }
+
+                // 🔥 Crear vehículo
                 Vehiculo v;
+
                 if (tipo.equalsIgnoreCase("Bus")) {
-                    v = new Bus(conductor, ruta, placa, disponible, capacidad, (float) tarifa);
+                    v = new Bus(conductor, ruta, placa, disponible, capacidad, tarifa);
                 } else if (tipo.equalsIgnoreCase("Buseta")) {
-                    v = new Buseta(conductor, ruta, placa, disponible, capacidad, (float) tarifa);
+                    v = new Buseta(conductor, ruta, placa, disponible, capacidad, tarifa);
+                } else if (tipo.equalsIgnoreCase("Microbus")) {
+                    v = new Microbus(conductor, ruta, placa, disponible, capacidad, tarifa);
                 } else {
-                    v = new Microbus(conductor, ruta, placa, disponible, capacidad, (float) tarifa);
+                    System.out.println("Tipo desconocido: " + tipo);
+                    continue;
                 }
 
                 lista.add(v);
             }
 
+        } catch (FileNotFoundException e) {
+            System.out.println("Archivo vehiculos.txt no existe aún.");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -106,116 +129,44 @@ public class VehiculoDAO {
         return lista;
     }
 
-    public void listarVehiculos() {
-        List<Vehiculo> lista = obtenerVehiculos();
-
-        if (lista.isEmpty()) {
-            System.out.println("No hay vehiculos registrados.");
-            return;
-        }
-
-        for (Vehiculo v : lista) {
-            System.out.println("---------------");
-            System.out.println("Tipo: " + v.getClass().getSimpleName());
-            System.out.println("Placa: " + v.getPlaca());
-            System.out.println("Disponible: " + v.isDisponible());
-            System.out.println("Capacidad: " + v.getCapacidad());
-            System.out.println("Tarifa: " + v.getTarifaBase());
-
-            if (v.getRuta() != null) {
-                System.out.println("Ruta:");
-                System.out.println("  Codigo: " + v.getRuta().getCodigo());
-                System.out.println("  Origen: " + v.getRuta().getOrigen());
-                System.out.println("  Destino: " + v.getRuta().getDestino());
-                System.out.println("  Distancia: " + v.getRuta().getDistancia());
-                System.out.println("  Tiempo: " + v.getRuta().getTiempo());
-            } else {
-                System.out.println("Sin ruta asignada");
+    
+    public Vehiculo buscarVehiculo(String placa) {
+        for (Vehiculo v : obtenerVehiculos()) {
+            if (v.getPlaca().equalsIgnoreCase(placa)) {
+                return v;
             }
         }
-    }
-
-    public String buscarVehiculo(String placa) {
-        try (BufferedReader br = new BufferedReader(new FileReader(archivos))) {
-
-            String linea;
-
-            while ((linea = br.readLine()) != null) {
-
-                String[] datos = linea.split(";");
-
-                if (datos[1].equals(placa)) {
-                    return linea;
-                }
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         return null;
     }
 
-    public void actualizarVehiculo(Vehiculo vehiculo) {
-        File temp = new File("temp.txt");
-
-        try (BufferedReader br = new BufferedReader(new FileReader(archivos)); FileWriter fw = new FileWriter(temp)) {
-
-            String linea;
-
-            while ((linea = br.readLine()) != null) {
-
-                String[] datos = linea.split(";");
-
-                if (datos[1].equals(vehiculo.getPlaca())) {
-
-                    fw.write(
-                            vehiculo.getClass().getSimpleName() + ";"
-                            + vehiculo.getPlaca() + ";"
-                            + vehiculo.getRuta().getCodigo() + ";"
-                            + vehiculo.isDisponible() + ";"
-                            + vehiculo.getCapacidad() + ";"
-                            + vehiculo.getTarifaBase() + "\n"
-                    );
-
-                } else {
-
-                    fw.write(linea + "\n");
-
-                }
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        archivos.delete();
-        temp.renameTo(archivos);
-    }
-
+   
     public void eliminarVehiculo(String placa) {
-        File temp = new File("temp.txt");
+        List<Vehiculo> lista = obtenerVehiculos();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(archivos)); FileWriter fw = new FileWriter(temp)) {
+        lista.removeIf(v -> v.getPlaca().equalsIgnoreCase(placa));
 
-            String linea;
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivoVehiculos, false))) {
 
-            while ((linea = br.readLine()) != null) {
+            for (Vehiculo v : lista) {
 
-                String[] datos = linea.split(";");
+                String documentoConductor = (v.getConductor() != null)
+                        ? v.getConductor().getDocumento()
+                        : "null";
 
-                if (!datos[1].equals(placa)) {
-                    fw.write(linea + "\n");
-                }
+                String linea = v.getClass().getSimpleName() + ";"
+                        + v.getPlaca() + ";"
+                        + v.getRuta().getCodigo() + ";"
+                        + v.isDisponible() + ";"
+                        + v.getCapacidad() + ";"
+                        + v.getTarifaBase() + ";"
+                        + documentoConductor;
 
+                bw.write(linea);
+                bw.newLine();
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Error eliminando vehículo: " + e.getMessage());
         }
-
-        archivos.delete();
-        temp.renameTo(archivos);
     }
-
 }

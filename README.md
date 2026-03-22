@@ -99,6 +99,7 @@ SistemaGestionTickets/
 - LIder: katherine sofia gutierrez barliza
 - Desarrolador 1:maria cristina martinez hinojosa
 - Desarrollador 2: bayron enrique lobo lopez
- Universidad Popular del Cesar  
-Programación de Computadores III
+ 
+ - Universidad Popular del Cesar  
+-Programación de Computadores III
 

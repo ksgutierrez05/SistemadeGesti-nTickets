@@ -71,6 +71,32 @@ public class ConductorDAO { //CORECCCION CON CONDUCTOR DAO
         }
         return null;
     }
+    public List<Conductor> obtenerConductores() {
+    List<Conductor> lista = new ArrayList<>();
+
+    try (BufferedReader br = new BufferedReader(new FileReader(archivos))) {
+        String linea;
+
+        while ((linea = br.readLine()) != null) {
+
+            String[] datos = linea.split(";");
+
+            if (datos.length < 3) continue; // evita errores
+
+            String documento = datos[0];
+            String nombre = datos[1];
+            String telefono = datos[2];
+
+            Conductor c = new Conductor(documento, nombre, telefono);
+            lista.add(c);
+        }
+
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
+    return lista;
+}
 
     public Conductor buscarPorLicencia(String numeroLicencia) {
         List<Conductor> lista = listarConductores();

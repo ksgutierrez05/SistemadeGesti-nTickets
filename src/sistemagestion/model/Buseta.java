@@ -9,12 +9,14 @@ package sistemagestion.model;
  * @author Maria Cristina
  */
 public class Buseta extends Vehiculo {
-    
-    public Buseta(Ruta ruta, String placa, boolean disponible, int capacidad, float tarifaBase) {
-        super(ruta, placa, disponible, capacidad, tarifaBase);
+
+    public Buseta(Conductor conductor, Ruta ruta, String placa, boolean disponible, int capacidad, float tarifaBase) {
+        super(conductor, ruta, placa, disponible, capacidad, tarifaBase);
         this.capacidad=19;
         this.tarifaBase=8000;
     }
+    
+    
     
   public void imprimirDetalle() {
     System.out.println("=== BUSETA ===");

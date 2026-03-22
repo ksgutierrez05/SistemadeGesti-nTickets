@@ -36,6 +36,16 @@ public class RutaService {
         return false;
     }
 
+    public Ruta obtenerRutaPorCodigo(String codigo) {
+        Ruta ruta = rutaDAO.obtenerRutaPorCodigo(codigo);
+
+        if (ruta == null) {
+            throw new IllegalArgumentException("No existe una ruta con código: " + codigo);
+        }
+
+        return ruta;
+    }
+
     //RegistraRuta
     public void registrarruta(Ruta ruta) {
         if (validarRuta(ruta.getCodigo())) {
@@ -46,15 +56,16 @@ public class RutaService {
         }
 
     }
-     public Ruta obtenerPrimeraRuta() {
-    List<Ruta> rutas = rutaDAO.obtenerRutas();
 
-    if (rutas.isEmpty()) {
-        return null;
+    public Ruta obtenerPrimeraRuta() {
+        List<Ruta> rutas = rutaDAO.obtenerRutas();
+
+        if (rutas.isEmpty()) {
+            return null;
+        }
+
+        return rutas.get(0);
     }
-
-    return rutas.get(0);
-}
 
     public List<Ruta> listarRutas() {
         return rutaDAO.obtenerRutas();

@@ -79,6 +79,7 @@ public class ReservaDAO {
 
     return lista;
 }
+    
     public String buscarReserva(String codigo){
     try (BufferedReader br = new BufferedReader(new FileReader(Archivos))) {
 
@@ -159,9 +160,36 @@ public class ReservaDAO {
     temp.renameTo(Archivos);
 }
 
-    public Reserva buscarReservaPorCodigo(String codigo) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+public Reserva buscarReservaPorCodigo(String codigo) {
+    try (BufferedReader br = new BufferedReader(new FileReader(Archivos))) {
+
+        String linea;
+
+        while ((linea = br.readLine()) != null) {
+
+            String[] datos = linea.split(";");
+
+            if (datos.length == 6 && datos[0].equals(codigo)) {
+
+                return new Reserva(
+                        datos[0], // codigo
+                        datos[1], // documento
+                        datos[2], // placa
+                        datos[3], // fecha creacion
+                        datos[4], // fecha viaje
+                        datos[5]  // estado
+                );
+            }
+        }
+
+    } catch (IOException e) {
+        e.printStackTrace();
     }
+
+    return null;
+}
+
     
     
     

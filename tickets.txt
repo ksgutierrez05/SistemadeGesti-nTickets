@@ -1,0 +1,1 @@
+88999;PasajeroEstudiante;CC;123;Sofia;Barliza;2000;2007-01-05;15000.0;0.15;12750.0;2026-02-01;Bus;101;313;Medellin;Valledupar

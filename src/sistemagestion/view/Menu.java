@@ -6,6 +6,7 @@ package sistemagestion.view;
 
 import java.util.List;
 import java.util.Scanner;
+import sistemagestion.dao.ConductorDAO;
 import sistemagestion.model.Bus;
 import sistemagestion.model.Buseta;
 import sistemagestion.model.Conductor;
@@ -13,10 +14,14 @@ import sistemagestion.model.Microbus;
 import sistemagestion.model.Pasajero;
 import sistemagestion.model.PasajeroEstudiante;
 import sistemagestion.model.PasajeroRegular;
+import sistemagestion.model.Reserva;
 import sistemagestion.model.Ruta;
+import sistemagestion.model.Ticket;
 import sistemagestion.model.Vehiculo;
 import sistemagestion.service.PersonaService;
+import sistemagestion.service.ReservaService;
 import sistemagestion.service.RutaService;
+import sistemagestion.service.TicketService;
 import sistemagestion.service.VehiculoService;
 
 /**
@@ -29,13 +34,14 @@ public class Menu {
     private PersonaService personaService;
     private VehiculoService vehiculoService;
     private RutaService rutaService;
+    private TicketService ticketService;
 
     public Menu() {
         this.scanner = new Scanner(System.in);
         this.personaService = new PersonaService();
         this.vehiculoService = new VehiculoService();
         this.rutaService = new RutaService();
-
+        this.ticketService = new TicketService();
     }
 
     public void iniciar() {
@@ -49,6 +55,7 @@ public class Menu {
             System.out.println("| 3. Gestion de Vehiculos        |");
             System.out.println("| 4. Gestion de Rutas            |");
             System.out.println("| 5. Gestion de Tickets          |");
+            System.out.println("| 6. Gestion de Reserva          |");
             System.out.println("| 0. Salir                       |");
             System.out.println("=================================");
             System.out.print("Seleccione una opcion: ");
@@ -63,13 +70,16 @@ public class Menu {
                     menuConductores();
                     break;
                 case 3:
-                    //menuVehiculos();
+                    menuVehiculos();
                     break;
                 case 4:
-                    //menuRutas();
+                    menuRutas();
                     break;
                 case 5:
-                    //menuTickets();
+                    menuTickets();
+                    break;
+                case 6:
+                    menuReservas();
                     break;
                 case 0:
                     System.out.println("Hasta luego!");
@@ -115,6 +125,7 @@ public class Menu {
                 case 5:
                     modificarPasajero();
                     break;
+
                 case 0:
                     break;
                 default:
@@ -470,13 +481,23 @@ public class Menu {
             System.out.print("Placa: ");
             String placa = scanner.nextLine().trim();
             List<Ruta> rutas = rutaService.listarRutas();
+            System.out.print("¿Está disponible? (1.Si / 2.No): ");
+            int estado = leerEntero();
+
+            boolean disponible;
+
+            if (estado == 1) {
+                disponible = true;
+            } else {
+                disponible = false;
+            }
 
             if (rutas.isEmpty()) {
                 System.out.println("No hay rutas registradas.");
                 return;
             }
 
-            List<Ruta> disponibles = vehiculoService.obtenerRutasDisponibles((RutaService) rutas);
+            List<Ruta> disponibles = vehiculoService.obtenerRutasDisponibles(rutas);
 
             if (disponibles.isEmpty()) {
                 System.out.println("Todas las rutas ya están asignadas.");
@@ -487,18 +508,28 @@ public class Menu {
 
             System.out.print("Tipo (1.Bus 2.Buseta 3.Microbus): ");
             int tipo = leerEntero();
+            System.out.print("Documento del conductor: ");
+            String documentoConductor = scanner.nextLine().trim();
+
+            ConductorDAO conductorDAO = new ConductorDAO();
+            Conductor conductor = conductorDAO.buscarConductor(documentoConductor);
+
+            if (conductor == null) {
+                System.out.println("Conductor no encontrado. No se puede registrar el vehículo.");
+                return;
+            }
 
             Vehiculo v;
 
             switch (tipo) {
                 case 1:
-                    v = new Bus(null, ruta, placa, true, 45, 15000);
+                    v = new Bus(conductor, ruta, placa, true, 45, 15000);
                     break;
                 case 2:
-                    v = new Buseta(null, ruta, placa, true, 19, 8000);
+                    v = new Buseta(conductor, ruta, placa, true, 19, 8000);
                     break;
                 case 3:
-                    v = new Microbus(null, ruta, placa, true, 25, 10000);
+                    v = new Microbus(conductor, ruta, placa, true, 25, 10000);
                     break;
                 default:
                     System.out.println("Tipo de vehiculo invalido.");
@@ -522,7 +553,7 @@ public class Menu {
             System.out.print("Placa del vehiculo: ");
             String placa = scanner.nextLine().trim();
 
-            String resultado = vehiculoService.buscarVehiculo(placa);
+            Vehiculo resultado = vehiculoService.buscarVehiculo(placa);
 
             if (resultado == null) {
                 System.out.println("Vehiculo no encontrado.");
@@ -707,5 +738,467 @@ public class Menu {
                 System.out.print("Ingrese un numero valido: ");
             }
         }
+    }
+// ================= TICKETS =================
+
+    private void menuTickets() {
+        int opcion;
+
+        do {
+            System.out.println("\n=================================");
+            System.out.println("|        GESTION DE TICKETS      |");
+            System.out.println("=================================");
+            System.out.println("| 1. Crear ticket                |");
+            System.out.println("| 2. Listar tickets              |");
+            System.out.println("| 3. Buscar ticket               |");
+            System.out.println("| 4. Eliminar ticket             |");
+            System.out.println("| 5. Tickets por fecha           |");
+            System.out.println("| 6. Tickets por tipo pasajero   |");
+            System.out.println("| 7. Tickets por tipo vehiculo   |");
+            System.out.println("| 8. Resumen del dia             |");
+            System.out.println("| 0. Volver                      |");
+            System.out.println("=================================");
+            System.out.print("Seleccione una opcion: ");
+
+            opcion = leerEntero();
+
+            switch (opcion) {
+                case 1:
+                    crearTicket();
+                    break;
+                case 2:
+                    listarTickets();
+                    break;
+                case 3:
+                    buscarTicket();
+                    break;
+                case 4:
+                    eliminarTicket();
+                    break;
+                case 5:
+                    ticketsPorFecha();
+                    break;
+                case 6:
+                    ticketsPorTipoPasajero();
+                    break;
+                case 7:
+                    ticketsPorTipoVehiculo();
+                    break;
+                case 8:
+                    resumenDia();
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("Opcion no valida.");
+            }
+
+        } while (opcion != 0);
+    }
+
+    private void crearTicket() {
+        try {
+            System.out.println("\n===== CREAR TICKET =====");
+
+            System.out.print("Codigo del ticket: ");
+            String codigo = scanner.nextLine().trim();
+
+            System.out.print("Documento del pasajero: ");
+            String documento = scanner.nextLine().trim();
+
+            Pasajero pasajero = personaService.buscarPasajero(documento);
+
+            if (pasajero == null) {
+                System.out.println("Pasajero no encontrado.");
+                return;
+            }
+
+            System.out.print("Placa del vehiculo: ");
+            String placa = scanner.nextLine().trim();
+
+            Vehiculo vehiculo = vehiculoService.buscarVehiculo(placa);
+
+            if (vehiculo == null) {
+                System.out.println("Vehiculo no encontrado.");
+                return;
+            }
+
+            if (!vehiculo.isDisponible()) {
+                System.out.println("El vehiculo no está disponible.");
+                return;
+            }
+
+            Ruta ruta = vehiculo.getRuta();
+
+            if (ruta == null) {
+                System.out.println("El vehiculo no tiene ruta asignada.");
+                return;
+            }
+
+            System.out.print("Fecha de compra (yyyy-MM-dd): ");
+            String fechaCompra = scanner.nextLine().trim();
+
+            Ticket ticket = new Ticket(
+                    codigo,
+                    pasajero,
+                    vehiculo,
+                    vehiculo.getTarifaBase(),
+                    fechaCompra
+            );
+
+            ticketService.venderTicket(ticket);
+
+            vehiculo.setDisponible(false);
+            vehiculoService.actualizarVehiculo(vehiculo);
+
+            System.out.println("Ticket creado exitosamente.");
+
+        } catch (Exception e) {
+            System.out.println("Error al crear ticket: " + e.getMessage());
+        }
+    }
+
+    private void listarTickets() {
+        try {
+            List<Ticket> lista = ticketService.listarTickets();
+
+            if (lista.isEmpty()) {
+                System.out.println("No hay tickets registrados.");
+                return;
+            }
+
+            for (Ticket t : lista) {
+                t.imprimirDetalle();
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error al listar tickets: " + e.getMessage());
+        }
+    }
+
+    private void buscarTicket() {
+        try {
+            System.out.print("Codigo del ticket: ");
+            String codigo = scanner.nextLine().trim();
+
+            Ticket ticket = ticketService.buscarTicket(codigo);
+
+            if (ticket == null) {
+                System.out.println("Ticket no encontrado.");
+                return;
+            }
+
+            ticket.imprimirDetalle();
+
+        } catch (Exception e) {
+            System.out.println("Error al buscar ticket: " + e.getMessage());
+        }
+    }
+
+    private void eliminarTicket() {
+        try {
+            System.out.print("Codigo del ticket a eliminar: ");
+            String codigo = scanner.nextLine().trim();
+
+            ticketService.eliminarTicket(codigo);
+            System.out.println("Ticket eliminado correctamente.");
+
+        } catch (Exception e) {
+            System.out.println("Error al eliminar ticket: " + e.getMessage());
+        }
+    }
+
+    private void ticketsPorFecha() {
+        try {
+            System.out.print("Ingrese la fecha (yyyy-MM-dd): ");
+            String fecha = scanner.nextLine().trim();
+
+            List<Ticket> lista = ticketService.listarTickets();
+            boolean encontrado = false;
+
+            for (Ticket t : lista) {
+                if (t.getFechaCompra().equals(fecha)) {
+                    t.imprimirDetalle();
+                    encontrado = true;
+                }
+            }
+
+            if (!encontrado) {
+                System.out.println("No hay tickets para esa fecha.");
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error al consultar tickets por fecha: " + e.getMessage());
+        }
+    }
+
+    private void ticketsPorTipoPasajero() {
+        try {
+            System.out.println("Tipos disponibles:");
+            System.out.println("1. PasajeroRegular");
+            System.out.println("2. PasajeroEstudiante");
+            System.out.println("3. PasajeroAdultoMayor");
+            System.out.print("Seleccione una opcion: ");
+
+            int opcion = leerEntero();
+            String tipo = "";
+
+            switch (opcion) {
+                case 1:
+                    tipo = "PasajeroRegular";
+                    break;
+                case 2:
+                    tipo = "PasajeroEstudiante";
+                    break;
+                case 3:
+                    tipo = "PasajeroAdultoMayor";
+                    break;
+                default:
+                    System.out.println("Opcion invalida.");
+                    return;
+            }
+
+            List<Ticket> lista = ticketService.ticketsPorTipoPasajero(tipo);
+
+            if (lista.isEmpty()) {
+                System.out.println("No hay tickets para ese tipo de pasajero.");
+                return;
+            }
+
+            for (Ticket t : lista) {
+                t.imprimirDetalle();
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error al consultar tickets por tipo de pasajero: " + e.getMessage());
+        }
+    }
+
+    private void ticketsPorTipoVehiculo() {
+        try {
+            System.out.println("Tipos disponibles:");
+            System.out.println("1. Bus");
+            System.out.println("2. Buseta");
+            System.out.println("3. Microbus");
+            System.out.print("Seleccione una opcion: ");
+
+            int opcion = leerEntero();
+            String tipoVehiculo = "";
+
+            switch (opcion) {
+                case 1:
+                    tipoVehiculo = "Bus";
+                    break;
+                case 2:
+                    tipoVehiculo = "Buseta";
+                    break;
+                case 3:
+                    tipoVehiculo = "Microbus";
+                    break;
+                default:
+                    System.out.println("Opcion invalida.");
+                    return;
+            }
+
+            List<Ticket> lista = ticketService.ticketsPorTipoVehiculo(tipoVehiculo);
+
+            if (lista.isEmpty()) {
+                System.out.println("No hay tickets para ese tipo de vehiculo.");
+                return;
+            }
+
+            for (Ticket t : lista) {
+                t.imprimirDetalle();
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error al consultar tickets por tipo de vehiculo: " + e.getMessage());
+        }
+    }
+
+    private void resumenDia() {
+        try {
+            System.out.print("Ingrese la fecha (yyyy-MM-dd): ");
+            String fecha = scanner.nextLine().trim();
+
+            ticketService.resumenDia(fecha);
+
+        } catch (Exception e) {
+            System.out.println("Error al generar resumen del dia: " + e.getMessage());
+        }
+    }
+    // ================= RESERVAS =================
+
+    private void menuReservas() {
+        ReservaService reservaService = new ReservaService(vehiculoService, personaService);
+        int opcion;
+
+        do {
+            System.out.println("\n=================================");
+            System.out.println("|         GESTION RESERVAS       |");
+            System.out.println("=================================");
+            System.out.println("| 1. Crear nueva reserva         |");
+            System.out.println("| 2. Cancelar reserva            |");
+            System.out.println("| 3. Listar reservas activas     |");
+            System.out.println("| 4. Historial de pasajero       |");
+            System.out.println("| 5. Convertir reserva en ticket |");
+            System.out.println("| 6. Verificar reservas vencidas |");
+            System.out.println("| 0. Volver                      |");
+            System.out.println("=================================");
+            System.out.print("Seleccione una opcion: ");
+
+            opcion = leerEntero();
+
+            switch (opcion) {
+                case 1:
+                    crearReserva(reservaService);
+                    break;
+                case 2:
+                    cancelarReserva(reservaService);
+                    break;
+                case 3:
+                    listarReservasActivas(reservaService);
+                    break;
+                case 4:
+                    historialPasajero(reservaService);
+                    break;
+                case 5:
+                    convertirReserva(reservaService);
+                    break;
+                case 6:
+                    verificarReservasVencidas(reservaService);
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("Opcion no valida.");
+            }
+
+        } while (opcion != 0);
+    }
+
+// ================= OPCIONES =================
+    private void crearReserva(ReservaService reservaService) {
+        System.out.println("\n===== CREAR RESERVA =====");
+
+        System.out.print("Codigo de la reserva: ");
+        String codigo = scanner.nextLine().trim();
+
+        System.out.print("Documento pasajero: ");
+        String doc = scanner.nextLine().trim();
+
+        System.out.print("Placa vehiculo: ");
+        String placa = scanner.nextLine().trim();
+
+        System.out.print("Fecha de creación (yyyy-MM-dd HH:mm): ");
+        String fechaCreacion = scanner.nextLine().trim();
+
+        System.out.print("Fecha viaje (yyyy-MM-dd): ");
+        String fechaViaje = scanner.nextLine().trim();
+
+        // Pasar el código manual al servicio
+        reservaService.crearReserva(codigo, doc, placa, fechaCreacion, fechaViaje);
+    }
+
+    private void cancelarReserva(ReservaService reservaService) {
+        System.out.print("Codigo de la reserva a cancelar: ");
+        String codigo = scanner.nextLine().trim();
+        reservaService.cancelarReserva(codigo);
+    }
+
+    private void listarReservasActivas(ReservaService reservaService) {
+        System.out.println("\n===== RESERVAS ACTIVAS =====");
+        List<Reserva> lista = reservaService.listarReservas();
+
+        for (Reserva r : lista) {
+            if (r.getEstado().equalsIgnoreCase("Activa")) {
+
+                // Obtener pasajero
+                Pasajero pasajero = null;
+                try {
+                    pasajero = personaService.buscarPasajero(r.getDocumentoPasajero());
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Pasajero no encontrado: " + r.getDocumentoPasajero());
+                }
+
+                // Obtener vehículo
+                Vehiculo vehiculo = vehiculoService.obtenerVehiculoPorPlaca(r.getPlacaVehiculo());
+
+                System.out.println("--------------------------------");
+                System.out.println("Codigo reserva: " + r.getCodigo());
+
+                if (pasajero != null) {
+                    System.out.println("Pasajero: " + pasajero.getNombre() + " " + pasajero.getApellido());
+                    System.out.println("Documento: " + pasajero.getDocumento());
+                    System.out.println("Telefono: " + pasajero.getTelefono());
+                } else {
+                    System.out.println("Pasajero: No disponible");
+                }
+
+                System.out.println("Vehiculo: " + r.getPlacaVehiculo());
+
+                if (vehiculo != null && vehiculo.getRuta() != null) {
+                    System.out.println("Ruta: " + vehiculo.getRuta().getOrigen() + " -> " + vehiculo.getRuta().getDestino());
+                    System.out.println("Distancia: " + vehiculo.getRuta().getDistancia());
+                    System.out.println("Tiempo: " + vehiculo.getRuta().getTiempo() + " minutos");
+                } else {
+                    System.out.println("Ruta: No asignada");
+                }
+
+                System.out.println("Fecha creación: " + r.getFechaCreacion());
+                System.out.println("Fecha viaje: " + r.getFechaViaje());
+                System.out.println("Estado: " + r.getEstado());
+            }
+        }
+    }
+
+    private void historialPasajero(ReservaService reservaService) {
+        System.out.print("Documento pasajero: ");
+        String doc = scanner.nextLine().trim();
+
+        System.out.println("\n===== HISTORIAL DE RESERVAS =====");
+        List<Reserva> lista = reservaService.listarReservas();
+        boolean encontrado = false;
+
+        for (Reserva r : lista) {
+            if (r.getDocumentoPasajero().equalsIgnoreCase(doc)) {
+                encontrado = true;
+
+                // Obtener el vehículo de la reserva
+                Vehiculo vehiculo = vehiculoService.obtenerVehiculoPorPlaca(r.getPlacaVehiculo());
+                System.out.println("--------------------------------");
+                System.out.println("Codigo reserva: " + r.getCodigo());
+                System.out.println("Vehiculo: " + r.getPlacaVehiculo());
+
+                if (vehiculo != null && vehiculo.getRuta() != null) {
+                    System.out.println("Ruta: " + vehiculo.getRuta().getOrigen() + " -> " + vehiculo.getRuta().getDestino());
+                    System.out.println("Distancia: " + vehiculo.getRuta().getDistancia());
+                    System.out.println("Tiempo: " + vehiculo.getRuta().getTiempo() + " minutos");
+                } else {
+                    System.out.println("Ruta: No asignada");
+                }
+
+                System.out.println("Fecha creación: " + r.getFechaCreacion());
+                System.out.println("Fecha viaje: " + r.getFechaViaje());
+                System.out.println("Estado: " + r.getEstado());
+            }
+        }
+
+        if (!encontrado) {
+            System.out.println("No se encontraron reservas para este pasajero.");
+        }
+    }
+
+    private void convertirReserva(ReservaService reservaService) {
+        System.out.print("Codigo de la reserva a convertir: ");
+        String codigo = scanner.nextLine().trim();
+        reservaService.convertirReserva(codigo);
+    }
+
+    private void verificarReservasVencidas(ReservaService reservaService) {
+        System.out.print("Ingrese la fecha actual (yyyy-MM-dd): ");
+        String fechaActual = scanner.nextLine().trim();
+        reservaService.verificarReservasVencidas(fechaActual);
+        System.out.println("Verificación completada.");
     }
 }

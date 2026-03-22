@@ -161,7 +161,8 @@ public class ReservaDAO {
 }
 
 
-public Reserva buscarReservaPorCodigo(String codigo) {
+    public Reserva buscarReservaPorCodigo(String codigo) {
+
     try (BufferedReader br = new BufferedReader(new FileReader(Archivos))) {
 
         String linea;
@@ -190,7 +191,5 @@ public Reserva buscarReservaPorCodigo(String codigo) {
     return null;
 }
 
-    
-    
-    
+   
 }

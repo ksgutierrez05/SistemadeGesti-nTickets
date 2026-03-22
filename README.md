@@ -100,6 +100,6 @@ SistemaGestionTickets/
 - Desarrolador 1:maria cristina martinez hinojosa
 - Desarrollador 2: bayron enrique lobo lopez
  
- - Universidad Popular del Cesar  
+-Universidad Popular del Cesar  
 -Programación de Computadores III
 

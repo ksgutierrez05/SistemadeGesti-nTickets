@@ -6,12 +6,18 @@ package sistemagestion.view;
 
 import java.util.List;
 import java.util.Scanner;
+import sistemagestion.model.Bus;
+import sistemagestion.model.Buseta;
 import sistemagestion.model.Conductor;
+import sistemagestion.model.Microbus;
 import sistemagestion.model.Pasajero;
 import sistemagestion.model.PasajeroEstudiante;
 import sistemagestion.model.PasajeroRegular;
+import sistemagestion.model.Ruta;
+import sistemagestion.model.Vehiculo;
 import sistemagestion.service.PersonaService;
-
+import sistemagestion.service.RutaService;
+import sistemagestion.service.VehiculoService;
 
 /**
  *
@@ -21,12 +27,14 @@ public class Menu {
 
     private Scanner scanner;
     private PersonaService personaService;
-
- 
+    private VehiculoService vehiculoService;
+    private RutaService rutaService;
 
     public Menu() {
         this.scanner = new Scanner(System.in);
         this.personaService = new PersonaService();
+        this.vehiculoService = new VehiculoService();
+        this.rutaService = new RutaService();
 
     }
 
@@ -414,8 +422,282 @@ public class Menu {
             System.out.println("Error: " + e.getMessage());
         }
     }
-    
-     // ================= APOYO =================
+
+    // ================= VEHICULOS =================
+    private void menuVehiculos() {
+        int opcion;
+
+        do {
+            System.out.println("\n=================================");
+            System.out.println("|       GESTION VEHICULOS        |");
+            System.out.println("=================================");
+            System.out.println("| 1. Registrar vehiculo          |");
+            System.out.println("| 2. Listar vehiculos            |");
+            System.out.println("| 3. Buscar vehiculo             |");
+            System.out.println("| 4. Eliminar vehiculo           |");
+            System.out.println("| 0. Volver                      |");
+            System.out.println("=================================");
+            System.out.print("Seleccione una opcion: ");
+
+            opcion = leerEntero();
+
+            switch (opcion) {
+                case 1:
+                    registrarVehiculo();
+                    break;
+                case 2:
+                    listarVehiculos();
+                    break;
+                case 3:
+                    buscarVehiculo();
+                    break;
+                case 4:
+                    eliminarVehiculo();
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("Opcion no valida.");
+            }
+
+        } while (opcion != 0);
+    }
+
+    private void registrarVehiculo() {
+        try {
+            System.out.println("\n===== REGISTRAR VEHICULO =====");
+
+            System.out.print("Placa: ");
+            String placa = scanner.nextLine().trim();
+            List<Ruta> rutas = rutaService.listarRutas();
+
+            if (rutas.isEmpty()) {
+                System.out.println("No hay rutas registradas.");
+                return;
+            }
+
+            List<Ruta> disponibles = vehiculoService.obtenerRutasDisponibles((RutaService) rutas);
+
+            if (disponibles.isEmpty()) {
+                System.out.println("Todas las rutas ya están asignadas.");
+                return;
+            }
+
+            Ruta ruta = disponibles.get(0);
+
+            System.out.print("Tipo (1.Bus 2.Buseta 3.Microbus): ");
+            int tipo = leerEntero();
+
+            Vehiculo v;
+
+            switch (tipo) {
+                case 1:
+                    v = new Bus(null, ruta, placa, true, 45, 15000);
+                    break;
+                case 2:
+                    v = new Buseta(null, ruta, placa, true, 19, 8000);
+                    break;
+                case 3:
+                    v = new Microbus(null, ruta, placa, true, 25, 10000);
+                    break;
+                default:
+                    System.out.println("Tipo de vehiculo invalido.");
+                    return;
+            }
+
+            vehiculoService.registrarVehiculo(v);
+
+        } catch (Exception e) {
+            System.out.println("Error al registrar vehiculo: " + e.getMessage());
+        }
+    }
+
+    private void listarVehiculos() {
+        System.out.println("\n===== LISTA DE VEHICULOS =====");
+        vehiculoService.listarVehiculos();
+    }
+
+    private void buscarVehiculo() {
+        try {
+            System.out.print("Placa del vehiculo: ");
+            String placa = scanner.nextLine().trim();
+
+            String resultado = vehiculoService.buscarVehiculo(placa);
+
+            if (resultado == null) {
+                System.out.println("Vehiculo no encontrado.");
+            } else {
+                System.out.println("Vehiculo encontrado: " + resultado);
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error al buscar vehiculo: " + e.getMessage());
+        }
+    }
+
+    private void eliminarVehiculo() {
+        try {
+            System.out.print("Placa del vehiculo a eliminar: ");
+            String placa = scanner.nextLine().trim();
+
+            vehiculoService.eliminarVehiculo(placa);
+
+        } catch (Exception e) {
+            System.out.println("Error al eliminar vehiculo: " + e.getMessage());
+        }
+    }
+    //================= RUTAS===================//
+
+    private void menuRutas() {
+        int opcion;
+
+        do {
+            System.out.println("\n=================================");
+            System.out.println("|        GESTION DE RUTAS        |");
+            System.out.println("=================================");
+            System.out.println("| 1. Registrar ruta             |");
+            System.out.println("| 2. Listar rutas               |");
+            System.out.println("| 3. Buscar ruta                |");
+            System.out.println("| 4. Modificar ruta             |");
+            System.out.println("| 5. Eliminar ruta              |");
+            System.out.println("| 0. Volver                     |");
+            System.out.println("=================================");
+            System.out.print("Seleccione una opcion: ");
+
+            opcion = leerEntero();
+
+            switch (opcion) {
+                case 1:
+                    registrarRuta();
+                    break;
+                case 2:
+                    listarRutas();
+                    break;
+                case 3:
+                    buscarRuta();
+                    break;
+                case 4:
+                    modificarRuta();
+                    break;
+                case 5:
+                    eliminarRuta();
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("Opcion no valida.");
+            }
+
+        } while (opcion != 0);
+    }
+
+    private void registrarRuta() {
+        try {
+            System.out.println("\n===== REGISTRAR RUTA =====");
+
+            System.out.print("Codigo: ");
+            String codigo = scanner.nextLine().trim();
+
+            System.out.print("Origen: ");
+            String origen = scanner.nextLine().trim();
+
+            System.out.print("Destino: ");
+            String destino = scanner.nextLine().trim();
+
+            System.out.print("Distancia: ");
+            String distancia = scanner.nextLine().trim();
+
+            System.out.print("Tiempo (minutos): ");
+            int tiempo = Integer.parseInt(scanner.nextLine().trim());
+
+            Ruta ruta = new Ruta(codigo, origen, destino, distancia, tiempo);
+
+            rutaService.registrarruta(ruta);
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private void listarRutas() {
+        List<Ruta> rutas = rutaService.listarRutas();
+
+        if (rutas.isEmpty()) {
+            System.out.println("No hay rutas registradas.");
+            return;
+        }
+
+        System.out.println("\n===== LISTA DE RUTAS =====");
+
+        for (Ruta r : rutas) {
+            System.out.println("--------------------------------");
+            System.out.println("Codigo: " + r.getCodigo());
+            System.out.println("Origen: " + r.getOrigen());
+            System.out.println("Destino: " + r.getDestino());
+            System.out.println("Distancia: " + r.getDistancia());
+            System.out.println("Tiempo: " + r.getTiempo());
+        }
+    }
+
+    private void buscarRuta() {
+        System.out.print("Codigo de la ruta: ");
+        String codigo = scanner.nextLine().trim();
+
+        String resultado = rutaService.buscarRuta(codigo);
+
+        if (resultado == null) {
+            System.out.println("Ruta no encontrada.");
+        }
+
+    }
+
+    private void modificarRuta() {
+        try {
+            System.out.println("\n===== MODIFICAR RUTA =====");
+
+            System.out.print("Codigo de la ruta a modificar: ");
+            String codigo = scanner.nextLine().trim();
+
+            // Buscar si existe
+            String resultado = rutaService.buscarRuta(codigo);
+
+            if (resultado == null) {
+                System.out.println("La ruta no existe.");
+                return;
+            }
+
+            System.out.println("\nIngrese los nuevos datos:");
+
+            System.out.print("Origen: ");
+            String origen = scanner.nextLine().trim();
+
+            System.out.print("Destino: ");
+            String destino = scanner.nextLine().trim();
+
+            System.out.print("Distancia: ");
+            String distancia = scanner.nextLine().trim();
+
+            System.out.print("Tiempo (minutos): ");
+            int tiempo = Integer.parseInt(scanner.nextLine().trim());
+
+            // Crear nueva ruta con el mismo código
+            Ruta rutaActualizada = new Ruta(codigo, origen, destino, distancia, tiempo);
+
+            rutaService.actualizarRuta(rutaActualizada);
+
+        } catch (Exception e) {
+            System.out.println("Error al modificar ruta: " + e.getMessage());
+        }
+    }
+
+    private void eliminarRuta() {
+        System.out.print("Codigo de la ruta a eliminar: ");
+        String codigo = scanner.nextLine().trim();
+
+        rutaService.eliminarRuta(codigo);
+    }
+    // ================= APOYO =================
+
     private int leerEntero() {
         while (true) {
             try {
@@ -427,4 +709,3 @@ public class Menu {
         }
     }
 }
-

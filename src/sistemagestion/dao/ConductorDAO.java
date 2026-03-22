@@ -9,9 +9,9 @@ import java.io.IOException;
 import sistemagestion.model.Conductor;
 import java.util.ArrayList;
 import java.util.List;
+public class ConductorDAO {
 
-public class ConductorDAO { //CORECCCION CON CONDUCTOR DAO
-
+    
     private final String archivoConductores = "conductores.txt";
 
     public void agregarConductor(Conductor conductor) {
@@ -31,12 +31,17 @@ public class ConductorDAO { //CORECCCION CON CONDUCTOR DAO
         }
     }
 
+   
     public List<Conductor> listarConductores() {
         List<Conductor> lista = new ArrayList<>();
+
         try (BufferedReader br = new BufferedReader(new FileReader(archivoConductores))) {
             String linea;
+
             while ((linea = br.readLine()) != null) {
                 String[] partes = linea.split(";");
+
+               
                 if (partes.length < 8) continue;
 
                 String tipoDoc = partes[0].trim();
@@ -48,59 +53,41 @@ public class ConductorDAO { //CORECCCION CON CONDUCTOR DAO
                 String categoriaLicencia = partes[6].trim();
                 String vencimientoLicencia = partes[7].trim();
 
+                
                 Conductor c = new Conductor(
                         tipoDoc, doc, nombre, apellido, telefono,
                         numeroLicencia, categoriaLicencia, vencimientoLicencia
                 );
+
                 lista.add(c);
             }
+
         } catch (FileNotFoundException e) {
-    
+            // archivo aún no existe (normal)
         } catch (IOException e) {
             System.out.println("Error leyendo conductores: " + e.getMessage());
         }
+
         return lista;
     }
 
+    
+    public List<Conductor> obtenerConductores() {
+        return listarConductores(); 
+    }
+
+    
     public Conductor buscarConductor(String documento) {
-        List<Conductor> lista = listarConductores();
-        for (Conductor c : lista) {
-            if (c.getDocumento().trim().equals(documento.trim())) {
+        for (Conductor c : listarConductores()) {
+            if (c.getDocumento().trim().equalsIgnoreCase(documento.trim())) {
                 return c;
             }
         }
         return null;
     }
-    public List<Conductor> obtenerConductores() {
-    List<Conductor> lista = new ArrayList<>();
-
-    try (BufferedReader br = new BufferedReader(new FileReader(archivos))) {
-        String linea;
-
-        while ((linea = br.readLine()) != null) {
-
-            String[] datos = linea.split(";");
-
-            if (datos.length < 3) continue; // evita errores
-
-            String documento = datos[0];
-            String nombre = datos[1];
-            String telefono = datos[2];
-
-            Conductor c = new Conductor(documento, nombre, telefono);
-            lista.add(c);
-        }
-
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-
-    return lista;
-}
 
     public Conductor buscarPorLicencia(String numeroLicencia) {
-        List<Conductor> lista = listarConductores();
-        for (Conductor c : lista) {
+        for (Conductor c : listarConductores()) {
             if (c.getNumeroLicencia().trim().equalsIgnoreCase(numeroLicencia.trim())) {
                 return c;
             }
@@ -110,7 +97,8 @@ public class ConductorDAO { //CORECCCION CON CONDUCTOR DAO
 
     public void eliminarConductor(String documento) {
         List<Conductor> lista = listarConductores();
-        lista.removeIf(c -> c.getDocumento().trim().equals(documento.trim()));
+
+        lista.removeIf(c -> c.getDocumento().trim().equalsIgnoreCase(documento.trim()));
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivoConductores, false))) {
             for (Conductor c : lista) {
@@ -130,20 +118,12 @@ public class ConductorDAO { //CORECCCION CON CONDUCTOR DAO
         }
     }
 
-    public Conductor existeConductor(String documento) {
-        return buscarConductor(documento);
-    }
-
-    public Conductor existeLicencia(String numeroLicencia) {
-        return buscarPorLicencia(numeroLicencia);
-    }
-
     public void modificarConductor(Conductor conductor) {
         List<Conductor> lista = listarConductores();
         boolean encontrado = false;
 
         for (int i = 0; i < lista.size(); i++) {
-            if (lista.get(i).getDocumento().trim().equals(conductor.getDocumento().trim())) {
+            if (lista.get(i).getDocumento().trim().equalsIgnoreCase(conductor.getDocumento().trim())) {
                 lista.set(i, conductor);
                 encontrado = true;
                 break;
@@ -171,5 +151,11 @@ public class ConductorDAO { //CORECCCION CON CONDUCTOR DAO
         } catch (IOException e) {
             System.out.println("Error modificando conductor: " + e.getMessage());
         }
+    }
+    public Conductor existeConductor(String documento) {
+        return buscarConductor(documento);
+    }
+    public Conductor existeLicencia(String numeroLicencia) {
+        return buscarPorLicencia(numeroLicencia);
     }
 }

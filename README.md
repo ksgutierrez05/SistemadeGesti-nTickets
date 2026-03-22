@@ -26,7 +26,7 @@ Se implementa la clase Reserva como una nueva entidad del sistema, permitiendo a
 - Fecha del viaje
 - Estado
 
-## ## Reglas de negocio
+## Reglas de negocio
 
 * Un vehículo no puede superar su capacidad máxima considerando:
 

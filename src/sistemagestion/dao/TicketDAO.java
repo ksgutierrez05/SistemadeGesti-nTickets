@@ -114,15 +114,15 @@ public class TicketDAO {
 
                 Ruta ruta = new Ruta(codigoRuta, origen, destino, distancia, tiempo);
 
-                Vehiculo vehiculo;
+                Vehiculo vehiculo = null;
                 if (tipoVehiculo.equalsIgnoreCase("Bus")) {
-                    vehiculo = new Bus(ruta, placa, true, 45, 15000f);
+                    vehiculo = new Bus(null, ruta, placa, true, 45, 15000f);
                 } else if (tipoVehiculo.equalsIgnoreCase("Buseta")) {
-                    vehiculo = new Buseta(ruta, placa, true, 19, 8000f);
-                } else if (tipoVehiculo.equalsIgnoreCase("Microbus")) {
-                    vehiculo = new Microbus(ruta, placa, true, 25, 10000f);
+                    vehiculo = new Buseta(null,ruta, placa, true, 19, 8000f);
+                } else if (tipoVehiculo.equalsIgnoreCase("MicroBus")) {
+                    vehiculo = new Microbus(null,ruta, placa, true, 25, 10000f);
                 } else {
-                    System.out.println("Tipo de vehículo desconocido: " + tipoVehiculo + " - Ticket ignorado.");
+                    System.out.println("Tipo de vehículo desconocido: " + tipoVehiculo + " — Ticket ignorado.");
                     continue;
                 }
 

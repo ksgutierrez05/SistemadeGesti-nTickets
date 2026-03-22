@@ -158,6 +158,10 @@ public class ReservaDAO {
     Archivos.delete();
     temp.renameTo(Archivos);
 }
+
+    public Reserva buscarReservaPorCodigo(String codigo) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     
     
     

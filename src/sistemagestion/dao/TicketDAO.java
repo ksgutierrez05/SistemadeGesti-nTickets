@@ -62,29 +62,33 @@ public class TicketDAO {
 
     public List<Ticket> listarTickets() {
         List<Ticket> lista = new ArrayList<>();
+
         try (BufferedReader br = new BufferedReader(new FileReader(archivoTickets))) {
             String linea;
+
             while ((linea = br.readLine()) != null) {
                 if (linea.trim().isEmpty()) {
                     continue;
                 }
+
                 String[] partes = linea.split(";");
-                if (partes.length < 18) {
+
+                if (partes.length < 17) {
                     continue;
                 }
 
-                String codigo = partes[0];
-                String tipoPasajero = partes[1];
-                String tipoDoc = partes[2];
-                String documento = partes[3];
-                String nombre = partes[4];
-                String apellido = partes[5];
-                String telefono = partes[6];
-                String fechaNacimiento = partes[7];
-                double precioBase = Double.parseDouble(partes[8]);
-                double descuento = Double.parseDouble(partes[9]);
-                double valorFinal = Double.parseDouble(partes[10]);
-                String fechaCompra = partes[11];
+                String codigo = partes[0].trim();
+                String tipoPasajero = partes[1].trim();
+                String tipoDoc = partes[2].trim();
+                String documento = partes[3].trim();
+                String nombre = partes[4].trim();
+                String apellido = partes[5].trim();
+                String telefono = partes[6].trim();
+                String fechaNacimiento = partes[7].trim();
+                double precioBase = Double.parseDouble(partes[8].trim());
+                double descuento = Double.parseDouble(partes[9].trim());
+                double valorFinal = Double.parseDouble(partes[10].trim());
+                String fechaCompra = partes[11].trim();
 
                 Pasajero p;
                 switch (tipoPasajero) {
@@ -99,30 +103,26 @@ public class TicketDAO {
                         break;
                 }
 
-                if (partes.length < 17) {
-                    continue;
-                }
+                String tipoVehiculo = partes[12].trim();
+                String placa = partes[13].trim();
+                String codigoRuta = partes[14].trim();
+                String origen = partes[15].trim();
+                String destino = partes[16].trim();
 
-                String tipoVehiculo = partes[12];
-                String placa = partes[13];
-                String codigoRuta = partes[14];
-                String origen = partes[15];
-                String destino = partes[16];
-
-                String distancia ="0";
+                String distancia = "0";
                 int tiempo = 0;
 
                 Ruta ruta = new Ruta(codigoRuta, origen, destino, distancia, tiempo);
 
-                Vehiculo vehiculo = null;
+                Vehiculo vehiculo;
                 if (tipoVehiculo.equalsIgnoreCase("Bus")) {
                     vehiculo = new Bus(ruta, placa, true, 45, 15000f);
                 } else if (tipoVehiculo.equalsIgnoreCase("Buseta")) {
                     vehiculo = new Buseta(ruta, placa, true, 19, 8000f);
-                } else if (tipoVehiculo.equalsIgnoreCase("MicroBus")) {
+                } else if (tipoVehiculo.equalsIgnoreCase("Microbus")) {
                     vehiculo = new Microbus(ruta, placa, true, 25, 10000f);
                 } else {
-                    System.out.println("Tipo de vehículo desconocido: " + tipoVehiculo + " — Ticket ignorado.");
+                    System.out.println("Tipo de vehículo desconocido: " + tipoVehiculo + " - Ticket ignorado.");
                     continue;
                 }
 
@@ -133,11 +133,13 @@ public class TicketDAO {
 
                 lista.add(t);
             }
+
         } catch (FileNotFoundException e) {
-            System.out.println("Archivo tickets.txt no encontrado, se creará al guardar.");
+          
         } catch (IOException e) {
             System.out.println("Error leyendo tickets: " + e.getMessage());
         }
+
         return lista;
     }
 
@@ -153,10 +155,12 @@ public class TicketDAO {
     public void eliminarTicket(String codigo) {
         List<Ticket> lista = listarTickets();
         lista.removeIf(t -> t.getCodigo().equalsIgnoreCase(codigo));
+
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivoTickets, false))) {
             for (Ticket ticket : lista) {
                 Pasajero p = ticket.getPasajero();
                 Vehiculo v = ticket.getVehiculo();
+
                 String linea = ticket.getCodigo() + ";"
                         + p.getClass().getSimpleName() + ";"
                         + p.getTipoDocumento() + ";"
@@ -174,6 +178,7 @@ public class TicketDAO {
                         + v.getRuta().getCodigo() + ";"
                         + v.getRuta().getOrigen() + ";"
                         + v.getRuta().getDestino();
+
                 bw.write(linea);
                 bw.newLine();
             }
@@ -216,24 +221,28 @@ public class TicketDAO {
     public void resumenDia(String fecha) {
         int totalTickets = 0;
         double totalRecaudado = 0;
+
         for (Ticket t : listarTickets()) {
             if (t.getFechaCompra().equals(fecha)) {
                 totalTickets++;
                 totalRecaudado += t.getValorFinal();
             }
         }
+
         System.out.println("Tickets vendidos: " + totalTickets);
         System.out.println("Total recaudado: $" + totalRecaudado);
     }
 
     public List<Ticket> ticketsPorPasajeroYFecha(Pasajero pasajero, String fechaCompra) {
         List<Ticket> resultado = new ArrayList<>();
+
         for (Ticket t : listarTickets()) {
             if (t.getPasajero().getDocumento().equalsIgnoreCase(pasajero.getDocumento())
                     && t.getFechaCompra().equals(fechaCompra)) {
                 resultado.add(t);
             }
         }
+
         return resultado;
     }
 }

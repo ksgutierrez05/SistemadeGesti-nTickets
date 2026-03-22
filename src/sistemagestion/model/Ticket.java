@@ -16,6 +16,10 @@ public class Ticket implements Imprimible,Calculable{
         this.precioBase = vehiculo.getTarifaBase();
         this.fechaCompra = fechaCompra;
     }
+
+    public Ticket(String codigoTicket, Pasajero pasajero, String vehiculo, int i, String fechaViaje) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 public double calcularTotal(boolean esFestivo) {
     double base = precioBase;
     if (esFestivo) {
@@ -90,6 +94,10 @@ public void imprimirDetalle() {
         System.out.println("Descuento aplicado: " + (descuento * 100) + "%");
         System.out.println("Valor Final: $" + valorFinal);
         System.out.println("=================\n");
+    }
+
+    public Object getFechaViaje() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     

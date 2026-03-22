@@ -6,15 +6,12 @@ package sistemagestion.view;
 
 import java.util.List;
 import java.util.Scanner;
-import sistemagestion.model.Bus;
-import sistemagestion.model.Buseta;
 import sistemagestion.model.Conductor;
-import sistemagestion.model.Microbus;
 import sistemagestion.model.Pasajero;
-import sistemagestion.model.Ruta;
-import sistemagestion.model.Vehiculo;
+import sistemagestion.model.PasajeroEstudiante;
+import sistemagestion.model.PasajeroRegular;
 import sistemagestion.service.PersonaService;
-import sistemagestion.service.VehiculoService;
+
 
 /**
  *
@@ -25,25 +22,30 @@ public class Menu {
     private Scanner scanner;
     private PersonaService personaService;
 
+ 
+
     public Menu() {
         this.scanner = new Scanner(System.in);
         this.personaService = new PersonaService();
+
     }
 
     public void iniciar() {
         int opcion;
         do {
             System.out.println("\n=================================");
-            System.out.println("|      SISTEMA TRANSCESAR       |");
+            System.out.println("|         SISTEMA TRANSCESAR     |");
             System.out.println("=================================");
-            System.out.println("| 1. Gestion de Pasajeros       |");
-            System.out.println("| 2. Gestion de Conductores     |");
-            System.out.println("| 0. Salir                      |");
+            System.out.println("| 1. Gestion de Pasajeros        |");
+            System.out.println("| 2. Gestion de Conductores      |");
+            System.out.println("| 3. Gestion de Vehiculos        |");
+            System.out.println("| 4. Gestion de Rutas            |");
+            System.out.println("| 5. Gestion de Tickets          |");
+            System.out.println("| 0. Salir                       |");
             System.out.println("=================================");
             System.out.print("Seleccione una opcion: ");
 
-            opcion = scanner.nextInt();
-            scanner.nextLine();
+            opcion = leerEntero();
 
             switch (opcion) {
                 case 1:
@@ -52,33 +54,42 @@ public class Menu {
                 case 2:
                     menuConductores();
                     break;
+                case 3:
+                    //menuVehiculos();
+                    break;
+                case 4:
+                    //menuRutas();
+                    break;
+                case 5:
+                    //menuTickets();
+                    break;
                 case 0:
                     System.out.println("Hasta luego!");
                     break;
                 default:
-                    System.out.println("Opción no válida.");
+                    System.out.println("Opcion no valida.");
             }
 
         } while (opcion != 0);
     }
 
-    // ───── MENÚ PASAJEROS ─────
+    // ================= PASAJEROS =================
     private void menuPasajeros() {
         int opcion;
         do {
             System.out.println("\n=================================");
-            System.out.println("|    GESTION DE PASAJEROS      |");
+            System.out.println("|      GESTION DE PASAJEROS      |");
             System.out.println("=================================");
-            System.out.println("| 1. Registrar pasajero        |");
-            System.out.println("| 2. Listar pasajeros          |");
-            System.out.println("| 3. Buscar pasajero           |");
-            System.out.println("| 4. Eliminar pasajero         |");
-            System.out.println("| 0. Volver                    |");
+            System.out.println("| 1. Registrar pasajero          |");
+            System.out.println("| 2. Listar pasajeros            |");
+            System.out.println("| 3. Buscar pasajero             |");
+            System.out.println("| 4. Eliminar pasajero           |");
+            System.out.println("| 5. Modificar pasajero          |");
+            System.out.println("| 0. Volver                      |");
             System.out.println("=================================");
             System.out.print("Seleccione una opcion: ");
 
-            opcion = scanner.nextInt();
-            scanner.nextLine();
+            opcion = leerEntero();
 
             switch (opcion) {
                 case 1:
@@ -93,77 +104,64 @@ public class Menu {
                 case 4:
                     eliminarPasajero();
                     break;
+                case 5:
+                    modificarPasajero();
+                    break;
                 case 0:
                     break;
                 default:
-                    System.out.println("Opción no válida.");
+                    System.out.println("Opcion no valida.");
             }
-
         } while (opcion != 0);
     }
 
-    // ───── MÉTODOS PASAJERO ─────
     private void registrarPasajero() {
-        System.out.println("\n=================================");
-        System.out.println("|       " + "Registrar Pasajero" + "      |");
-        System.out.println("=================================");
-
-        System.out.print("Tipo documento: ");
-        String tipoDoc = scanner.nextLine();
-
-        System.out.print("Documento: ");
-        String doc = leerDocumento();
-
-        System.out.print("Nombre: ");
-        String nombre = scanner.nextLine();
-
-        System.out.print("Apellido: ");
-        String apellido = scanner.nextLine();
-
-        System.out.print("Telefono: ");
-        String telefono = scanner.nextLine();
-
-        System.out.print("Fecha nacimiento (yyyy-MM-dd): ");
-        String fechaNac = scanner.nextLine();
-        if (!fechaNac.contains("-") || fechaNac.length() != 10) {
-            System.out.println("Fecha invalida. Use formato yyyy-MM-dd");
-            return;
-        }
-
-        System.out.print("Tipo (1-Regular, 2-Estudiante): ");
-        int tipo = scanner.nextInt();
-        scanner.nextLine();
-
-        System.out.print("Fecha de registro (yyyy-MM-dd): ");
-        String fechaCompra = scanner.nextLine();
-
         try {
-            Pasajero pasajero;
+            System.out.println("\n===== REGISTRAR PASAJERO =====");
 
+            System.out.print("Tipo documento: ");
+            String tipoDoc = scanner.nextLine().trim();
+
+            System.out.print("Documento: ");
+            String doc = scanner.nextLine().trim();
+
+            System.out.print("Nombre: ");
+            String nombre = scanner.nextLine().trim();
+
+            System.out.print("Apellido: ");
+            String apellido = scanner.nextLine().trim();
+
+            System.out.print("Telefono: ");
+            String telefono = scanner.nextLine().trim();
+
+            System.out.print("Fecha nacimiento (yyyy-MM-dd): ");
+            String fechaNac = scanner.nextLine().trim();
+
+            System.out.print("Tipo (1.Regular / 2.Estudiante): ");
+            int tipo = leerEntero();
+
+            System.out.print("Fecha de registro (yyyy-MM-dd): ");
+            String fechaCompra = scanner.nextLine().trim();
+
+            Pasajero pasajero;
             if (tipo == 2) {
-                pasajero = new sistemagestion.model.PasajeroEstudiante(
-                        tipoDoc, doc, nombre, apellido, telefono, fechaNac);
+                pasajero = new PasajeroEstudiante(tipoDoc, doc, nombre, apellido, telefono, fechaNac);
             } else {
-                pasajero = new sistemagestion.model.PasajeroRegular(
-                        tipoDoc, doc, nombre, apellido, telefono, fechaNac);
+                pasajero = new PasajeroRegular(tipoDoc, doc, nombre, apellido, telefono, fechaNac);
             }
 
             personaService.registrarPasajero(pasajero, fechaCompra);
 
-            System.out.println("Pasajero registrado");
-
-        } catch (IllegalArgumentException e) {
-            System.out.println("Error: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error al registrar pasajero: " + e.getMessage());
         }
     }
 
     private void listarPasajeros() {
-        System.out.println("\nLista de Pasajeros");
-
         List<Pasajero> lista = personaService.listarPasajeros();
 
         if (lista.isEmpty()) {
-            System.out.println("No hay pasajeros registrados");
+            System.out.println("No hay pasajeros registrados.");
             return;
         }
 
@@ -173,50 +171,95 @@ public class Menu {
     }
 
     private void buscarPasajero() {
-        System.out.println("\nBuscar Pasajero");
-        System.out.print("Documento: ");
-        String doc = scanner.nextLine().trim();
-
         try {
+            System.out.print("Documento del pasajero: ");
+            String doc = scanner.nextLine().trim();
+
             Pasajero p = personaService.buscarPasajero(doc);
             p.imprimirDetalle();
-        } catch (IllegalArgumentException e) {
-            System.out.println("Pasajero no encontrado");
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
     private void eliminarPasajero() {
-        System.out.println("\nEliminar Pasajero");
-        System.out.print("Documento: ");
-        String doc = scanner.nextLine().trim();
+        try {
+            System.out.print("Documento del pasajero a eliminar: ");
+            String doc = scanner.nextLine().trim();
+
+            personaService.eliminarPasajero(doc);
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private void modificarPasajero() {
+        System.out.println("\n===== MODIFICAR PASAJERO =====");
+        System.out.print("Documento del pasajero a modificar: ");
+        String doc = scanner.nextLine();
 
         try {
-            personaService.eliminarPasajero(doc);
-            System.out.println("Pasajero eliminado");
+            Pasajero existente = personaService.buscarPasajero(doc);
+
+            System.out.println("\nDatos actuales:");
+            existente.imprimirDetalle();
+
+            System.out.println("\nIngrese los nuevos datos:");
+
+            System.out.print("Nombre: ");
+            String nombre = scanner.nextLine();
+
+            System.out.print("Apellido: ");
+            String apellido = scanner.nextLine();
+
+            System.out.print("Telefono: ");
+            String telefono = scanner.nextLine();
+
+            System.out.print("Fecha nacimiento (yyyy-MM-dd): ");
+            String fechaNac = scanner.nextLine();
+
+            System.out.print("Fecha actual / de modificacion (yyyy-MM-dd): ");
+            String fechaCompra = scanner.nextLine();
+
+            Pasajero actualizado;
+
+            if (existente instanceof sistemagestion.model.PasajeroEstudiante) {
+                actualizado = new sistemagestion.model.PasajeroEstudiante(
+                        existente.getTipoDocumento(), doc, nombre, apellido, telefono, fechaNac);
+            } else if (existente instanceof sistemagestion.model.PasajeroAdultoMayor) {
+                actualizado = new sistemagestion.model.PasajeroAdultoMayor(
+                        existente.getTipoDocumento(), doc, nombre, apellido, telefono, fechaNac);
+            } else {
+                actualizado = new sistemagestion.model.PasajeroRegular(
+                        existente.getTipoDocumento(), doc, nombre, apellido, telefono, fechaNac);
+            }
+
+            personaService.modificarPasajero(actualizado, fechaCompra);
+
         } catch (IllegalArgumentException e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
 
-    private String leerDocumento() {
-        String doc = scanner.nextLine().trim();
-        return doc;
-    }
-
-// ================= CONDUCTORES =================
+    // ================= CONDUCTORES =================
     private void menuConductores() {
         int opcion;
         do {
-            System.out.println("\nGESTION DE CONDUCTORES");
-            System.out.println("1. Registrar conductor");
-            System.out.println("2. Listar conductores");
-            System.out.println("3. Buscar conductor");
-            System.out.println("4. Eliminar conductor");
-            System.out.println("0. Volver");
+            System.out.println("\n=================================");
+            System.out.println("|     GESTION DE CONDUCTORES     |");
+            System.out.println("=================================");
+            System.out.println("| 1. Registrar conductor         |");
+            System.out.println("| 2. Listar conductores          |");
+            System.out.println("| 3. Buscar conductor            |");
+            System.out.println("| 4. Eliminar conductor          |");
+            System.out.println("| 5. Modificar conductor         |");
+            System.out.println("| 0. Volver                      |");
+            System.out.println("=================================");
             System.out.print("Seleccione una opcion: ");
 
-            opcion = scanner.nextInt();
-            scanner.nextLine();
+            opcion = leerEntero();
 
             switch (opcion) {
                 case 1:
@@ -231,42 +274,45 @@ public class Menu {
                 case 4:
                     eliminarConductor();
                     break;
+                case 5:
+                    modificarConductor();
+                    break;
                 case 0:
                     break;
                 default:
-                    System.out.println("Opcion no valida");
+                    System.out.println("Opcion no valida.");
             }
         } while (opcion != 0);
     }
 
     private void registrarConductor() {
-        System.out.println("\n===== REGISTRAR CONDUCTOR =====");
-
-        System.out.print("Tipo documento: ");
-        String tipoDoc = scanner.nextLine().trim();
-
-        System.out.print("Documento: ");
-        String doc = scanner.nextLine().trim();
-
-        System.out.print("Nombre: ");
-        String nombre = scanner.nextLine().trim();
-
-        System.out.print("Apellido: ");
-        String apellido = scanner.nextLine().trim();
-
-        System.out.print("Teléfono: ");
-        String telefono = scanner.nextLine().trim();
-
-        System.out.print("Número de licencia: ");
-        String licencia = scanner.nextLine().trim();
-
-        System.out.print("Categoría (B1, B2, C1, C2): ");
-        String categoria = scanner.nextLine().trim();
-
-        System.out.print("Vencimiento licencia (yyyy-MM-dd): ");
-        String vencimiento = scanner.nextLine().trim();
-
         try {
+            System.out.println("\n===== REGISTRAR CONDUCTOR =====");
+
+            System.out.print("Tipo documento: ");
+            String tipoDoc = scanner.nextLine().trim();
+
+            System.out.print("Documento: ");
+            String doc = scanner.nextLine().trim();
+
+            System.out.print("Nombre: ");
+            String nombre = scanner.nextLine().trim();
+
+            System.out.print("Apellido: ");
+            String apellido = scanner.nextLine().trim();
+
+            System.out.print("Telefono: ");
+            String telefono = scanner.nextLine().trim();
+
+            System.out.print("Numero de licencia: ");
+            String licencia = scanner.nextLine().trim();
+
+            System.out.print("Categoria licencia (C1/C2): ");
+            String categoria = scanner.nextLine().trim();
+
+            System.out.print("Vencimiento licencia (yyyy-MM-dd): ");
+            String vencimiento = scanner.nextLine().trim();
+
             Conductor conductor = new Conductor(
                     tipoDoc, doc, nombre, apellido, telefono,
                     licencia, categoria, vencimiento
@@ -274,20 +320,16 @@ public class Menu {
 
             personaService.registrarConductor(conductor);
 
-            System.out.println("✅ Conductor registrado correctamente.");
-
-        } catch (IllegalArgumentException e) {
-            System.out.println("❌ Error: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error al registrar conductor: " + e.getMessage());
         }
     }
 
     private void listarConductores() {
-        System.out.println("\nLista de Conductores");
-
         List<Conductor> lista = personaService.listarConductores();
 
         if (lista.isEmpty()) {
-            System.out.println("No hay conductores registrados");
+            System.out.println("No hay conductores registrados.");
             return;
         }
 
@@ -297,120 +339,92 @@ public class Menu {
     }
 
     private void buscarConductor() {
-        System.out.println("\nBuscar Conductor");
-        System.out.print("Documento: ");
-        String doc = scanner.nextLine().trim();
-
         try {
+            System.out.print("Documento del conductor: ");
+            String doc = scanner.nextLine().trim();
+
             Conductor c = personaService.buscarConductor(doc);
             c.imprimirDetalle();
-        } catch (IllegalArgumentException e) {
-            System.out.println("Conductor no encontrado");
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
     private void eliminarConductor() {
-        System.out.println("\nEliminar Conductor");
-        System.out.print("Documento: ");
-        String doc = scanner.nextLine().trim();
+        try {
+            System.out.print("Documento del conductor a eliminar: ");
+            String doc = scanner.nextLine().trim();
+
+            personaService.eliminarConductor(doc);
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private void modificarConductor() {
+        System.out.println("\n===== MODIFICAR CONDUCTOR =====");
+        System.out.print("Documento del conductor a modificar: ");
+        String doc = scanner.nextLine();
 
         try {
-            personaService.eliminarConductor(doc);
-            System.out.println("Conductor eliminado");
+            Conductor existente = personaService.buscarConductor(doc);
+
+            System.out.println("\nDatos actuales:");
+            existente.imprimirDetalle();
+
+            System.out.println("\nIngrese los nuevos datos:");
+
+            System.out.print("Tipo documento: ");
+            String tipoDoc = scanner.nextLine();
+
+            System.out.print("Nombre: ");
+            String nombre = scanner.nextLine();
+
+            System.out.print("Apellido: ");
+            String apellido = scanner.nextLine();
+
+            System.out.print("Telefono: ");
+            String telefono = scanner.nextLine();
+
+            System.out.print("Numero de licencia: ");
+            String licencia = scanner.nextLine();
+
+            System.out.print("Categoria licencia (C1/C2): ");
+            String categoria = scanner.nextLine();
+
+            System.out.print("Vencimiento licencia (yyyy-MM-dd): ");
+            String vencimiento = scanner.nextLine();
+
+            Conductor actualizado = new Conductor(
+                    tipoDoc,
+                    doc,
+                    nombre,
+                    apellido,
+                    telefono,
+                    licencia,
+                    categoria,
+                    vencimiento
+            );
+
+            personaService.modificarConductor(actualizado);
+
         } catch (IllegalArgumentException e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
     
-    // ================= VEHICULOS =================
-
-private VehiculoService vehiculoService = new VehiculoService();
-
-private void menuVehiculos() {
-
-    int opcion;
-
-    do {
-        System.out.println("\n==== GESTION VEHICULOS ====");
-        System.out.println("1. Registrar");
-        System.out.println("2. Listar");
-        System.out.println("3. Buscar");
-        System.out.println("4. Eliminar");
-        System.out.println("0. Volver");
-
-        opcion = scanner.nextInt();
-        scanner.nextLine();
-
-        switch (opcion) {
-            case 1: registrarVehiculo(); break;
-            case 2: listarVehiculos(); break;
-            case 3: buscarVehiculo(); break;
-            case 4: eliminarVehiculo(); break;
+     // ================= APOYO =================
+    private int leerEntero() {
+        while (true) {
+            try {
+                int valor = Integer.parseInt(scanner.nextLine().trim());
+                return valor;
+            } catch (NumberFormatException e) {
+                System.out.print("Ingrese un numero valido: ");
+            }
         }
-
-    } while (opcion != 0);
-}
-private void registrarVehiculo() {
-
-    System.out.println("\nRegistrar Vehiculo");
-
-    System.out.print("Placa: ");
-    String placa = scanner.nextLine();
-
-    System.out.print("Codigo ruta: ");
-    String codigo = scanner.nextLine();
-
-    Ruta ruta = new Ruta(codigo, "Medellin", "Bogota", 400);
-
-    System.out.print("Tipo (1.Bus 2.Buseta 3.Microbus): ");
-    int tipo = scanner.nextInt();
-
-    Vehiculo v;
-
-    switch (tipo) {
-        case 1:
-            v = new Bus(ruta, placa, true, 45, 15000);
-            break;
-        case 2:
-            v = new Buseta(ruta, placa, true, 19, 8000);
-            break;
-        default:
-            v = new Microbus(ruta, placa, true, 25, 10000);
-            break;
-    }
-
-    vehiculoService.registrarVehiculo(v);
-}
-private void listarVehiculos() {
-
-    List<Vehiculo> lista = vehiculoService.listarVehiculos();
-
-    if (lista.isEmpty()) {
-        System.out.println("No hay vehiculos");
-        return;
-    }
-
-    for (Vehiculo v : lista) {
-        v.imprimirDetalle();
     }
 }
-private void buscarVehiculo() {
 
-    System.out.print("Placa: ");
-    String placa = scanner.nextLine();
-
-    try {
-        Vehiculo v = vehiculoService.buscarVehiculo(placa);
-        v.imprimirDetalle();
-    } catch (Exception e) {
-        System.out.println("Vehiculo no encontrado");
-    }
-}
-private void eliminarVehiculo() {
-
-    System.out.print("Placa: ");
-    String placa = scanner.nextLine();
-
-    vehiculoService.eliminarVehiculo(placa);
-}
-}

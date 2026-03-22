@@ -1,1 +1,5 @@
 
+PasajeroEstudiante;CC;123;Sofia;Barliza;2000;2007-01-05
+PasajeroRegular;CC;12345;Maria;Martinez;20014;2006-01-02
+PasajeroRegular;CC;123456;Esther;Campo;58996;1975-01-05
+PasajeroAdultoMayor;99999;99999;ll;jj;888;1875-02-01

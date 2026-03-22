@@ -56,7 +56,19 @@ public class RutaDAO {
             e.printStackTrace();
         }
     }
+    public Ruta obtenerRutaPorCodigo(String codigo) {
+    List<Ruta> rutas = obtenerRutas();
+
+    for (Ruta ruta : rutas) {
+        if (ruta.getCodigo().trim().equals(codigo.trim())) {
+            return ruta;
+        }
+    }
+
+    return null;
+}
 //ListarRutas
+    
 
    
     

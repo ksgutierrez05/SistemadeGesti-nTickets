@@ -16,13 +16,20 @@ public abstract class Vehiculo implements Imprimible  {
     protected boolean disponible;
     protected int capacidad;
     protected float tarifaBase;
+    private Conductor conductor=null;
 
-    public Vehiculo(Ruta ruta, String placa, boolean disponible, int capacidad, float tarifaBase) {
+    public Vehiculo(Conductor conductor,Ruta ruta, String placa, boolean disponible, int capacidad, float tarifaBase) {
+        this.conductor=conductor;
         this.ruta = ruta;
         this.placa = placa;
         this.disponible = disponible;
         this.capacidad = capacidad;
         this.tarifaBase = tarifaBase;
+        
+    }
+
+    public Conductor getConductor() {
+        return conductor;
     }
 
 
@@ -80,6 +87,9 @@ public void imprimirDetalle() {
     System.out.println("Capacidad: " + capacidad);
     System.out.println("Disponible: " + disponible);
     System.out.println("Tarifa: " + tarifaBase);
+    if(conductor != null) {
+        System.out.println("Conductor: " + conductor.getNombre());
+    }
 
 }
     

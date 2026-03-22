@@ -57,6 +57,15 @@ public class VehiculoService {
 
     return rutas; 
 }
+     public Vehiculo obtenerVehiculoPorPlaca(String placa) {
+    List<Vehiculo> vehiculos = vehiculoDAO.obtenerVehiculos();
+    for (Vehiculo v : vehiculos) {
+        if (v.getPlaca().equalsIgnoreCase(placa)) {
+            return v;
+        }
+    }
+    return null; 
+}
     
    public void listarVehiculos(){
     if (vehiculoDAO != null) {

@@ -11,11 +11,11 @@ package sistemagestion.model;
  * @author Maria Cristina
  */
 public abstract class Vehiculo implements Imprimible  {
-    protected Ruta ruta;
-    protected String placa;
-    protected boolean disponible;
-    protected int capacidad;
-    protected float tarifaBase;
+    private Ruta ruta;
+    private String placa;
+    private boolean disponible;
+    private int capacidad;
+    private float tarifaBase;
     private Conductor conductor=null;
 
     public Vehiculo(Conductor conductor,Ruta ruta, String placa, boolean disponible, int capacidad, float tarifaBase) {

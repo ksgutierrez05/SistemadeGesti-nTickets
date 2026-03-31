@@ -8,19 +8,19 @@ package sistemagestion.model;
  *
  * @author Maria Cristina
  */
-public class Reserva {
+public class Reserva implements Imprimible {
 
     private String codigo;
     private String documentoPasajero;
     private String placaVehiculo;
     private String fechaCreacion;
     private String fechaViaje;
-    private String estado;
+    private EstadoReserva estado;
 
     public Reserva() {
     }
 
-    public Reserva(String codigo, String documentoPasajero, String placaVehiculo, String fechaCreacion, String fechaViaje, String estado) {
+    public Reserva(String codigo, String documentoPasajero, String placaVehiculo, String fechaCreacion, String fechaViaje, EstadoReserva estado) {
         this.codigo = codigo;
         this.documentoPasajero = documentoPasajero;
         this.placaVehiculo = placaVehiculo;
@@ -28,6 +28,9 @@ public class Reserva {
         this.fechaViaje = fechaViaje;
         this.estado = estado;
     }
+    
+
+    
 
     public String getCodigo() {
         return codigo;
@@ -69,12 +72,26 @@ public class Reserva {
         this.fechaViaje = fechaViaje;
     }
 
-    public String getEstado() {
+    public EstadoReserva getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(EstadoReserva estado) {
         this.estado = estado;
+    }
+
+   
+    @Override
+    public void imprimirDetalle() {
+        System.out.println("===== RESERVA =====");
+        System.out.println("Codigo: " + codigo);
+        System.out.println("Documento pasajero: " + documentoPasajero);
+        System.out.println("Placa vehiculo: " + placaVehiculo);
+        System.out.println("Fecha creacion: " + fechaCreacion);
+        System.out.println("Fecha viaje: " + fechaViaje);
+        System.out.println("Estado: " + estado);
+        System.out.println("===================");
+      
     }
 
 }

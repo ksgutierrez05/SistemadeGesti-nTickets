@@ -11,10 +11,10 @@ package sistemagestion.model;
 public class Bus extends Vehiculo {
 
     public Bus(Conductor conductor, Ruta ruta, String placa, boolean disponible, int capacidad, float tarifaBase) {
-        super(conductor, ruta, placa, disponible, capacidad, tarifaBase);
-        this.capacidad=35;
-        this.tarifaBase=15000;
+        super(conductor, ruta, placa, disponible, 45 , 15000);
     }
+
+    
     
     
     
